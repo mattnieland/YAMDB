@@ -5,7 +5,7 @@ on:
     branches:
     - main
 env:
-  TEST_PROJECT_PATH: YAMDB.Tests\YAMDB.Tests.csproj
+  TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
   CONFIGURATION: Release
     
 jobs:
