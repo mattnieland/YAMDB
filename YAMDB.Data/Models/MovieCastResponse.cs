@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace YAMDB.Data.Models.TMDb;
+namespace YAMDB.Data.Models;
 
 public class Cast
 {

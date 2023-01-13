@@ -3,12 +3,12 @@
 namespace YAMDB.Data.Providers.Tests;
 
 [TestClass]
-public class TMDbProviderTests
+public class TMDBProviderTests
 {
     [TestMethod]
     public void GetGenresTest()
     {
-        var provider = new TMDbProvider();
+        var provider = new TMDBProvider();
         var genres = provider.GetGenres().Result;
         Assert.IsTrue(genres.Any());
     }
@@ -16,7 +16,7 @@ public class TMDbProviderTests
     [TestMethod]
     public void GetMovieCastTest()
     {
-        var provider = new TMDbProvider();
+        var provider = new TMDBProvider();
         var topMovie = provider.GetTopMovies(1).Result.FirstOrDefault();
         Assert.IsNotNull(topMovie);
 
@@ -25,18 +25,18 @@ public class TMDbProviderTests
     }
 
     [TestMethod]
-    public void GetTopMoviesTest()
+    public void GetTopMoviesByPageTest()
     {
-        var provider = new TMDbProvider();
-        var movies = provider.GetTopMovies().Result;
+        var provider = new TMDBProvider();
+        var movies = provider.GetTopMovies(2).Result;
         Assert.IsTrue(movies.Any());
     }
 
     [TestMethod]
-    public void GetTopMoviesByPageTest()
+    public void GetTopMoviesTest()
     {
-        var provider = new TMDbProvider();
-        var movies = provider.GetTopMovies(2).Result;
+        var provider = new TMDBProvider();
+        var movies = provider.GetTopMovies().Result;
         Assert.IsTrue(movies.Any());
     }
 }

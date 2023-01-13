@@ -1,18 +1,18 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using RestSharp;
-using YAMDB.Data.Models.TMDb;
+using YAMDB.Data.Models;
 
 namespace YAMDB.Data.Providers;
 
-public class TMDbProvider
+public class TMDBProvider
 {
     private static readonly string baseUrl = "https://api.themoviedb.org/3";
     private readonly RestClient client = new(baseUrl);
 
-    public TMDbProvider()
+    public TMDBProvider()
     {
-        var builder = new ConfigurationBuilder().AddUserSecrets<TMDbProvider>();
+        var builder = new ConfigurationBuilder().AddUserSecrets<TMDBProvider>();
         Configuration = builder.Build();
     }
 
