@@ -7,8 +7,8 @@ public interface IRepositoryBase<T>
     void CreateAsync(T entity);
     void DeleteAsync(T entity);
     IQueryable<T> FindAll();
-    T? FindById(int id);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
+    T? FindById(int id);
     void SaveAsync();
     void UpdateAsync(T entity);
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using YAMDB.Models;
 using YAMDB.Repositories;
@@ -16,35 +17,115 @@ public class MoviesController : ControllerBase
         _moviesRepository = moviesRepository;
     }
 
-    // GET: api/<MoviesController>
+    // DELETE api/<MovieController>/5
+    [HttpDelete("{uuid}")]
+    public IActionResult Delete(Guid uuid)
+    {
+        try
+        {
+            var existingMovie = _moviesRepository.FindByCondition(a => a.UUID == uuid).FirstOrDefault();
+            if (existingMovie == null)
+            {
+                return NotFound();
+            }
+
+            _moviesRepository.DeleteAsync(existingMovie);
+            _moviesRepository.SaveAsync();
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    // GET: api/<MovieController>
     [HttpGet]
-    public IEnumerable<Movies> Get()
+    public IActionResult Get()
     {
-        return _moviesRepository.FindAll();
+        try
+        {
+            return new OkObjectResult(_moviesRepository.FindAll());
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    // GET api/<MoviesController>/5
+    // GET api/<MovieController>/5
     [HttpGet("{uuid}")]
-    public Movies? Get(Guid uuid)
+    public IActionResult Get(Guid uuid)
     {
-        return _moviesRepository.FindByCondition(a => a.UUID == uuid).FirstOrDefault();
+        try
+        {
+            var existingMovie = _moviesRepository.FindByCondition(a => a.UUID == uuid).FirstOrDefault();
+            if (existingMovie == null)
+            {
+                return NotFound();
+            }
+
+            return new OkObjectResult(existingMovie);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    //// POST api/<MoviesController>
-    //[HttpPost]
-    //public void Post([FromBody] string value)
-    //{
-    //}
+    // POST api/<MovieController>
+    [HttpPost]
+    public IActionResult Post([FromBody] string value)
+    {
+        try
+        {
+            var movie = JsonSerializer.Deserialize<Movies>(value);
+            if (movie == null || movie.Id == 0)
+            {
+                return BadRequest();
+            }
 
-    //// PUT api/<MoviesController>/5
-    //[HttpPut("{id}")]
-    //public void Put(int id, [FromBody] string value)
-    //{
-    //}
+            var existingMovie = _moviesRepository.FindByCondition(a => a.UUID == movie.UUID).FirstOrDefault();
+            if (existingMovie != null)
+            {
+                return Conflict();
+            }
 
-    //// DELETE api/<MoviesController>/5
-    //[HttpDelete("{id}")]
-    //public void Delete(int id)
-    //{
-    //}
+            _moviesRepository.CreateAsync(movie);
+            _moviesRepository.SaveAsync();
+            return new OkObjectResult(movie);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    // PUT api/<MovieController>/5
+    [HttpPut("{uuid}")]
+    public IActionResult Put(Guid uuid, [FromBody] string value)
+    {
+        try
+        {
+            var existingMovie = _moviesRepository.FindByCondition(a => a.UUID == uuid).FirstOrDefault();
+            if (existingMovie == null)
+            {
+                return NotFound();
+            }
+
+            var movie = JsonSerializer.Deserialize<Movies>(value);
+            if (movie == null || movie.Id == 0)
+            {
+                return BadRequest();
+            }
+
+            _moviesRepository.UpdateAsync(movie);
+            _moviesRepository.SaveAsync();
+            return new ObjectResult(movie) {StatusCode = StatusCodes.Status201Created};
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 }

@@ -1,21 +1,23 @@
-﻿namespace YAMDB.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace YAMDB.Models;
 
 public class Movies
 {
-    public int Id { get; set; }
-    public Guid UUID { get; set; } = Guid.NewGuid();
+    [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("uuid")] public Guid UUID { get; set; } = Guid.NewGuid();
 
-    public string? Title { get; set; }
+    [JsonPropertyName("title")] public string? Title { get; set; }
 
-    public string? Description { get; set; }
+    [JsonPropertyName("description")] public string? Description { get; set; }
 
-    public string? Genres { get; set; }
+    [JsonPropertyName("genres")] public string? Genres { get; set; }
 
-    public string? ImageUrl { get; set; }
+    [JsonPropertyName("imageUrl")] public string? ImageUrl { get; set; }
 
-    public DateTime? ReleaseDate { get; set; }
-    
-    public int TheMovieDbID { get; set; }
+    [JsonPropertyName("releaseDate")] public DateTime? ReleaseDate { get; set; }
 
-    public virtual ICollection<MovieRatings> Ratings { get; set; }
+    [JsonPropertyName("theMovieDbId")] public int TheMovieDbId { get; set; }
+
+    [JsonPropertyName("ratings")] public virtual ICollection<MovieRatings>? Ratings { get; set; }
 }

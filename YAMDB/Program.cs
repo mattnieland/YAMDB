@@ -36,7 +36,7 @@ if (db == null)
 
 var tmdbProvider = new TMDBProvider();
 var genres = tmdbProvider.GetGenres().Result.ToDictionary(k => k.Id, v => v.Name);
-var topMovies = tmdbProvider.GetTopMovies().Result;
+var topMovies = tmdbProvider.GetTopMovies(1).Result;
 
 #region Seed Movies
 
@@ -46,7 +46,7 @@ var seedMovies = topMovies.Select((tm, index) => new Movies
     Title = tm.Title,
     Description = tm.Overview,
     ImageUrl = tm.PosterPath,
-    TheMovieDbID = tm.Id,
+    TheMovieDbId = tm.Id,
     ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
     Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
 });
@@ -57,7 +57,7 @@ db.SaveChanges();
 
 #region Seed Movie Ratings
 
-var movieDictionary = db.Movies.ToDictionary(k => k.TheMovieDbID, v => v.Id);
+var movieDictionary = db.Movies.ToDictionary(k => k.TheMovieDbId, v => v.Id);
 var ratings = topMovies.Select((tm, index) => new MovieRatings
 {
     Id = index + 1,
@@ -79,12 +79,12 @@ var seedActorsInMovies = new List<ActorsInMovies>();
 foreach (var movie in topMovies)
 {
     var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
-    movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbID).Contains(ma.Id));
+    movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
     seedActors.AddRange(movieCast.Select((cm, index) => new Actors
     {
         Id = seedActors.Count + index + 1,
         Name = cm.Name,
-        TheMovieDbID = cm.Id
+        TheMovieDbId = cm.Id
     }).ToList());
 
     seedActorsInMovies.AddRange(movieCast.Select((cm, index) => new ActorsInMovies

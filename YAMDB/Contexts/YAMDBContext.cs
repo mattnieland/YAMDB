@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using YAMDB.Data.Providers;
 using YAMDB.Models;
 
 namespace YAMDB.Contexts;
@@ -23,6 +22,6 @@ public class YAMDBContext : DbContext
         modelBuilder.Entity<Movies>();
         modelBuilder.Entity<MovieRatings>().HasOne(m => m.Movie);
         modelBuilder.Entity<Actors>();
-        modelBuilder.Entity<ActorsInMovies>().HasKey(a => new { a.ActorId, a.MovieId });
+        modelBuilder.Entity<ActorsInMovies>().HasKey(a => new {a.ActorId, a.MovieId});
     }
 }

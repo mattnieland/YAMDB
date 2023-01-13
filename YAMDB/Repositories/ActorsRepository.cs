@@ -7,6 +7,5 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
 {
     public ActorsRepository(YAMDBContext context) : base(context)
     {
-        
     }
 }
