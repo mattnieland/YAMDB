@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMDB", "YAMDB\YAMDB.csproj", "{6512A682-A777-4B12-A2B8-1135CD721998}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMDB.Data", "YAMDB.Data\YAMDB.Data.csproj", "{821CF424-CE03-468D-89FF-F4C90428DD53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMDB.Tests", "YAMDB.DataTests\YAMDB.Tests.csproj", "{3E44242B-F317-46B4-83C0-5B75BC3347EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6512A682-A777-4B12-A2B8-1135CD721998}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6512A682-A777-4B12-A2B8-1135CD721998}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6512A682-A777-4B12-A2B8-1135CD721998}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6512A682-A777-4B12-A2B8-1135CD721998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{821CF424-CE03-468D-89FF-F4C90428DD53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{821CF424-CE03-468D-89FF-F4C90428DD53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{821CF424-CE03-468D-89FF-F4C90428DD53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{821CF424-CE03-468D-89FF-F4C90428DD53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8641103C-15D0-4829-B003-CA7C5E0FD17E}
+	EndGlobalSection
+EndGlobal
