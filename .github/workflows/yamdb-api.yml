@@ -5,12 +5,12 @@ on:
     branches:
     - main
 env:
-  TEST_NAME: YAMDB.Tests
+  TEST_PROJECT_PATH: YAMDB.Tests\YAMDB.Tests.csproj
   CONFIGURATION: Release
     
 jobs:
   build-and-deploy:
-    name: Build & Deploy
+    name: Build & Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,4 +32,4 @@ jobs:
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
       
     - name: Test
-      run: dotnet ${{ env.TEST_NAME }} --no-restore --verbosity normal       
+      run: dotnet ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB.Tests", "YAMDB.DataTests\YAMDB.Tests.csproj", "{3E44242B-F317-46B4-83C0-5B75BC3347EF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB", "YAMDB\YAMDB.csproj", "{1BE21EBC-9C4B-4EF7-9A2B-DD23BBAC0556}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB.Api", "YAMDB.Api\YAMDB.Api.csproj", "{923DF58E-81E4-4FC3-98E6-1EEF548CCD1B}"
@@ -14,16 +12,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy Files", "Deploy File
 		.github\workflows\yamdb-api.yml = .github\workflows\yamdb-api.yml
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB.Tests", "YAMDB.Tests\YAMDB.Tests.csproj", "{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E44242B-F317-46B4-83C0-5B75BC3347EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BE21EBC-9C4B-4EF7-9A2B-DD23BBAC0556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1BE21EBC-9C4B-4EF7-9A2B-DD23BBAC0556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BE21EBC-9C4B-4EF7-9A2B-DD23BBAC0556}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,6 +28,10 @@ Global
 		{923DF58E-81E4-4FC3-98E6-1EEF548CCD1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{923DF58E-81E4-4FC3-98E6-1EEF548CCD1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{923DF58E-81E4-4FC3-98E6-1EEF548CCD1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
