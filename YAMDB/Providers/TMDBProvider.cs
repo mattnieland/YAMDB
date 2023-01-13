@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using RestSharp;
-using YAMDB.Data.Models;
+using YAMDB.Models.TheMovieDb;
 
 namespace YAMDB.Data.Providers;
 

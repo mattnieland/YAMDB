@@ -1,0 +1,35 @@
+name: yamdb-api
+
+on:
+  push:
+    branches:
+    - main
+env:
+  TEST_NAME: YAMDB.Tests
+  CONFIGURATION: Release
+    
+jobs:
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0.x' ]
+        
+    steps:            
+    - name: Checkout            
+      uses: actions/checkout@v3
+      
+    - name: Setup dotnet ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+        
+    - name: Restore
+      run: dotnet restore
+      
+    - name: Build & Publish
+      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
+      
+    - name: Test
+      run: dotnet ${{ env.TEST_NAME }} --no-restore --verbosity normal       
