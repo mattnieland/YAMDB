@@ -6,6 +6,7 @@ on:
     - main
 env:
   TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
+  CORE_PROJECT_PATH: YAMDB
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x  
     
@@ -30,7 +31,7 @@ jobs:
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
 
     - name: Set Secret Token
-      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ env.DOPPLER_TOKEN }}"
+      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ env.DOPPLER_TOKEN }}" --project "${{ env.CORE_PROJECT_PATH }}"
       
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
