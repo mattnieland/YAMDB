@@ -1,4 +1,4 @@
-name: yamdb-api
+name: yamdb-tests
 
 on:
   push:
@@ -9,7 +9,7 @@ env:
   CONFIGURATION: Release
     
 jobs:
-  build-and-deploy:
+  build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest
     strategy:
@@ -32,4 +32,4 @@ jobs:
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
       
     - name: Test
-      run: dotnet ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
+      run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal

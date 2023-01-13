@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB.Api", "YAMDB.Api\YAMD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy Files", "Deploy Files", "{ACAB57D0-FF3D-48AA-B532-4B9211D57D66}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\yamdb-api.yml = .github\workflows\yamdb-api.yml
+		.github\workflows\yamdb-tests.yml = .github\workflows\yamdb-tests.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAMDB.Tests", "YAMDB.Tests\YAMDB.Tests.csproj", "{D1D76256-14D7-4EBB-8985-D3BA7A0DBFAC}"
