@@ -28,9 +28,7 @@ public class SecretProviders
 
     public static void LoadSecrets()
     {
-        if (Environment.GetEnvironmentVariable("DOPPLER_PROJECT") != null
-            && Environment.GetEnvironmentVariable("DOPPLER_CONFIG") != null
-            && Environment.GetEnvironmentVariable("DOPPLER_ENVIRONMENT") != null)
+        if (SecretsLoaded)
         {
             return;
         }
@@ -41,7 +39,7 @@ public class SecretProviders
         var endpoint =
             $"configs/config/secrets/download?project={project}&config={config}&format=json&include_dynamic_secrets=true&dynamic_secrets_ttl_sec=1800";
         var request = new RestRequest(endpoint);
-        var token = Configuration!["DOPPLER_TOKEN"] ?? Environment.GetEnvironmentVariable("DOPPLER_TOKEN");
+        var token = Configuration!["DOPPLER_TOKEN"];
         request.AddHeader("Accept", "application/json");
         request.AddHeader("Authorization", $"Basic {token}");
         var response = client.Execute(request);

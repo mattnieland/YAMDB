@@ -28,6 +28,9 @@ jobs:
       
     - name: Build & Publish
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
+
+    - name: Set Secret Token
+      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ env.DOPPLER_TOKEN }}"
       
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
