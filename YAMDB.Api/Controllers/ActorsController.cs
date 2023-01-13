@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using YAMDB.Api.Repositories;
 using YAMDB.Models;
-using YAMDB.Repositories;
 
-namespace YAMDB.Controllers;
+namespace YAMDB.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,7 +17,7 @@ public class ActorsController : ControllerBase
     }
 
     // DELETE api/<ActorController>/5
-    [HttpDelete("{uuid}")]
+    [HttpDelete]
     public IActionResult Delete(Guid uuid)
     {
         try
@@ -44,7 +44,7 @@ public class ActorsController : ControllerBase
     {
         try
         {
-            return new OkObjectResult(_actorsRepository.FindAll());
+            return new OkObjectResult(_actorsRepository.GetAll());
         }
         catch (Exception)
         {
@@ -53,7 +53,7 @@ public class ActorsController : ControllerBase
     }
 
     // GET api/<ActorController>/5
-    [HttpGet("{uuid}")]
+    [HttpGet]
     public IActionResult Get(Guid uuid)
     {
         try
@@ -101,7 +101,7 @@ public class ActorsController : ControllerBase
     }
 
     // PUT api/<ActorController>/5
-    [HttpPut("{uuid}")]
+    [HttpPut]
     public IActionResult Put(Guid uuid, [FromBody] string value)
     {
         try

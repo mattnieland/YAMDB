@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using YAMDB.Contexts;
 
-namespace YAMDB.Repositories;
+namespace YAMDB.Api.Repositories;
 
 public class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {

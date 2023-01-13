@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
 using RestSharp;
 using YAMDB.Models.TheMovieDb;
-using YAMDB.Providers;
 
-namespace YAMDB.Data.Providers;
+namespace YAMDB.Providers;
 
 public class TMDBProvider
 {
@@ -16,7 +15,7 @@ public class TMDBProvider
         {
             if (!SecretProviders.SecretsLoaded)
             {
-                throw new Exception("Configuration is null");
+                SecretProviders.LoadSecrets();
             }
             else if (Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY") == null)
             {
@@ -141,7 +140,7 @@ public class TMDBProvider
 
             #endregion
 
-            return movies;
+            return movies.OrderBy(m => m.Id).ToList();
         }
         catch (Exception)
         {

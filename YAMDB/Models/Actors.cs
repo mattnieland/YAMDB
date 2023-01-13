@@ -12,5 +12,7 @@ public class Actors
 
     [JsonPropertyName("theMovieDbId")] public int TheMovieDbId { get; set; }
 
-    [JsonPropertyName("movies")] public virtual ICollection<Movies>? Movies { get; set; }
+    [JsonPropertyName("movies")] public ICollection<Movies>? Movies { get; set; }
+
+    [JsonIgnore] public List<ActorsInMovies>? ActorsInMovies { get; set; }
 }

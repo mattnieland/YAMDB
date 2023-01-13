@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using YAMDB.Data.Providers;
 using YAMDB.Models;
+using YAMDB.Providers;
 
 namespace YAMDB.Contexts;
 
 public class YAMDBContext : DbContext
 {
     public DbSet<Movies> Movies { get; set; }
-
     public DbSet<Actors> Actors { get; set; }
     public DbSet<ActorsInMovies> ActorsInMovies { get; set; }
     public DbSet<MovieRatings> MovieRatings { get; set; }
@@ -20,95 +19,117 @@ public class YAMDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<MovieRatings>();
+        modelBuilder.Entity<Movies>();
+        modelBuilder.Entity<ActorsInMovies>();
+        modelBuilder.Entity<Actors>()
+            .HasMany(a => a.Movies)
+            .WithMany(p => p.Actors)
+            .UsingEntity<ActorsInMovies>(
+                j => j
+                    .HasOne(aim => aim.Movie)
+                    .WithMany(m => m.ActorsInMovies)
+                    .HasForeignKey(aim => aim.MovieId),
+                j => j
+                    .HasOne(aim => aim.Actor)
+                    .WithMany(a => a.ActorsInMovies)
+                    .HasForeignKey(aim => aim.ActorId),
+                j => { j.HasKey(t => new {t.ActorId, t.MovieId}); })
+            ;
+
+        modelBuilder.Entity<Movies>()
+            .HasMany(a => a.Actors)
+            .WithMany(p => p.Movies)
+            .UsingEntity<ActorsInMovies>(
+                j => j
+                    .HasOne(aim => aim.Actor)
+                    .WithMany(m => m.ActorsInMovies)
+                    .HasForeignKey(aim => aim.ActorId),
+                j => j
+                    .HasOne(aim => aim.Movie)
+                    .WithMany(a => a.ActorsInMovies)
+                    .HasForeignKey(aim => aim.MovieId),
+                j => { j.HasKey(t => new {t.ActorId, t.MovieId}); })
+            ;
+
+#if DEBUG
         var tmdbProvider = new TMDBProvider();
         var genres = tmdbProvider.GetGenres().Result.ToDictionary(k => k.Id, v => v.Name);
         var topMovies = tmdbProvider.GetTopMovies(1).Result;
-        
+
         #region Seed Movies & Ratings
-        if (Environment.GetEnvironmentVariable("MOVIES_SEEDED") != "true")
+
+        var seedMovies = topMovies.Select((tm, index) => new Movies
         {
-            var seedMovies = topMovies.Select((tm, index) => new Movies
-            {
-                Id = index + 1,
-                Title = tm.Title,
-                Description = tm.Overview,
-                ImageUrl = tm.PosterPath,
-                TheMovieDbId = tm.Id,
-                ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
-                Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
-            });
+            Id = index + 1,
+            Title = tm.Title,
+            Description = tm.Overview,
+            ImageUrl = tm.PosterPath,
+            TheMovieDbId = tm.Id,
+            ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
+            Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
+        }).ToList();
 
-            modelBuilder.Entity<Movies>().HasData(seedMovies);
+        modelBuilder.Entity<Movies>().HasData(seedMovies);
 
-            #region Seed Movie Ratings
-            var seedRatings = topMovies.Select((tm, index) => new MovieRatings
-            {
-                Id = index + 1,
-                MovieId = index + 1,
-                Rating = tm.VoteAverage,
-                RatingUpperLimit = 10,
-                TotalReviews = tm.VoteCount,
-                Source = "TheMovieDB"
-            });
-            #endregion
+        #region Seed Movie Ratings
 
-            modelBuilder.Entity<MovieRatings>().HasData(seedRatings);
-            Environment.SetEnvironmentVariable("MOVIES_SEEDED", "true");
-        }
-        else
+        var seedRatings = topMovies.Select((tm, index) => new MovieRatings
         {
-            modelBuilder.Entity<Movies>();
-            modelBuilder.Entity<MovieRatings>();
-        }
+            Id = index + 1,
+            MovieId = index + 1,
+            Rating = tm.VoteAverage,
+            RatingUpperLimit = 10,
+            TotalReviews = tm.VoteCount,
+            Source = "TheMovieDB"
+        }).ToList();
+
         #endregion
 
-        modelBuilder.Entity<MovieRatings>()
-            .HasOne(mr => mr.Movie)
-            .WithMany(m => m.Ratings)
-            .HasForeignKey(mr => mr.MovieId);
+        modelBuilder.Entity<MovieRatings>().HasData(seedRatings);
+
+        #endregion
 
         #region Seed Actors & Actors In Movies
-        if (Environment.GetEnvironmentVariable("ACTORS_SEEDED") != "true")
+
+        var seedActors = new List<Actors>();
+        var seedActorsInMovies = new List<ActorsInMovies>();
+        var movieIndex = 1;
+        var actorIndex = 1;
+        foreach (var movie in topMovies)
         {
-            var seedActors = new List<Actors>();
-            var seedActorsInMovies = new List<ActorsInMovies>();
-            var movieIndex = 1;
-            foreach (var movie in topMovies)
+            var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
+            movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
+
+            foreach (var castMember in movieCast)
             {
-                var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
-                movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
-                seedActors.AddRange(movieCast.Select((cm, index) => new Actors
+                var actor = new Actors
                 {
-                    Id = seedActors.Count + index + 1,
-                    Name = cm.Name,
-                    TheMovieDbId = cm.Id
-                }).ToList());
+                    Id = actorIndex,
+                    Name = castMember.Name,
+                    TheMovieDbId = castMember.Id
+                };
+                seedActors.Add(actor);
 
-                seedActorsInMovies.AddRange(movieCast.Select((cm, index) => new ActorsInMovies
+                var actorMovie = new ActorsInMovies
                 {
-                    Id = seedActors.Count + index + 1,
-                    ActorId = seedActors.Count + index + 1,
+                    ActorId = actorIndex,
                     MovieId = movieIndex,
-                    CharacterName = cm.Character
-                }).ToList());
+                    CharacterName = castMember.Character
+                };
+                seedActorsInMovies.Add(actorMovie);
 
-                movieIndex++;
+                actorIndex++;
             }
 
-            modelBuilder.Entity<Actors>().HasData(seedActors);
-            modelBuilder.Entity<ActorsInMovies>().HasData(seedActorsInMovies);
-            Environment.SetEnvironmentVariable("ACTORS_SEEDED", "true");
+            movieIndex++;
         }
-        else
-        {
-            modelBuilder.Entity<Actors>();
-            modelBuilder.Entity<ActorsInMovies>();
-        }
+
+        modelBuilder.Entity<Actors>().HasData(seedActors);
+        modelBuilder.Entity<ActorsInMovies>().HasData(seedActorsInMovies);
+
         #endregion
 
-        //modelBuilder.Entity<ActorsInMovies>()
-        //    .HasOne(am => am.Actor)
-        //    .WithMany(a => a.Movies)
-        //    .HasForeignKey(am => am.ActorId);
+#endif
     }
 }

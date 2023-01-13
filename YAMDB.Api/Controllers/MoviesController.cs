@@ -1,10 +1,9 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using YAMDB.Api.Repositories;
 using YAMDB.Models;
-using YAMDB.Repositories;
 
-namespace YAMDB.Controllers;
+namespace YAMDB.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -18,7 +17,8 @@ public class MoviesController : ControllerBase
     }
 
     // DELETE api/<MovieController>/5
-    [HttpDelete("{uuid}")]
+    // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
+    [HttpDelete("{uuid:guid}")]
     public IActionResult Delete(Guid uuid)
     {
         try
@@ -45,7 +45,7 @@ public class MoviesController : ControllerBase
     {
         try
         {
-            return new OkObjectResult(_moviesRepository.FindAll());
+            return new OkObjectResult(_moviesRepository.GetAll());
         }
         catch (Exception)
         {
@@ -54,7 +54,8 @@ public class MoviesController : ControllerBase
     }
 
     // GET api/<MovieController>/5
-    [HttpGet("{uuid}")]
+    // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
+    [HttpGet("{uuid:guid}")]
     public IActionResult Get(Guid uuid)
     {
         try
@@ -102,7 +103,8 @@ public class MoviesController : ControllerBase
     }
 
     // PUT api/<MovieController>/5
-    [HttpPut("{uuid}")]
+    // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
+    [HttpPut("{uuid:guid}")]
     public IActionResult Put(Guid uuid, [FromBody] string value)
     {
         try

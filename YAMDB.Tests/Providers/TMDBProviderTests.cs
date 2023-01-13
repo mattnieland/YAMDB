@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YAMDB.Providers;
 
-namespace YAMDB.Data.Providers.Tests;
+namespace YAMDB.Tests.Providers;
 
 [TestClass]
 public class TMDBProviderTests

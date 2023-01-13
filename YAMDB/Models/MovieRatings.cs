@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace YAMDB.Models;
 
@@ -11,7 +12,7 @@ public class MovieRatings
     [Display(Name = "Movie")]
     public int MovieId { get; set; }
 
-    public virtual Movies? Movie { get; set; }
+    [JsonIgnore] public Movies? Movie { get; set; }
 
     public string? Source { get; set; }
 

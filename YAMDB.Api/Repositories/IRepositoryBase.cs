@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace YAMDB.Repositories;
+namespace YAMDB.Api.Repositories;
 
 public interface IRepositoryBase<T>
 {
