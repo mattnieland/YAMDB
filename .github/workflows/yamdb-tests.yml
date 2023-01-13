@@ -7,23 +7,21 @@ on:
 env:
   TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
   CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x  
     
 jobs:
   build-and-test:
     name: Build & Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '6.0.x' ]
+    runs-on: ubuntu-latest    
         
     steps:            
     - name: Checkout            
       uses: actions/checkout@v3
       
-    - name: Setup dotnet ${{ matrix.dotnet-version }}
+    - name: Setup dotnet ${{ env.dotnet-version }}
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: ${{ env.dotnet-version }}
         
     - name: Restore
       run: dotnet restore

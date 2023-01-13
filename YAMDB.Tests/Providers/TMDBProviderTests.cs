@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YAMDB.Providers;
 
 namespace YAMDB.Data.Providers.Tests;
 
@@ -38,5 +39,11 @@ public class TMDBProviderTests
         var provider = new TMDBProvider();
         var movies = provider.GetTopMovies().Result;
         Assert.IsTrue(movies.Any());
+    }
+
+    [TestInitialize]
+    public void Startup()
+    {
+        SecretProviders.LoadSecrets();
     }
 }

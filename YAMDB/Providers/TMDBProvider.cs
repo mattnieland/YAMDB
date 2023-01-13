@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Microsoft.Extensions.Configuration;
 using RestSharp;
 using YAMDB.Models.TheMovieDb;
+using YAMDB.Providers;
 
 namespace YAMDB.Data.Providers;
 
@@ -10,29 +10,21 @@ public class TMDBProvider
     private static readonly string baseUrl = "https://api.themoviedb.org/3";
     private readonly RestClient client = new(baseUrl);
 
-    public TMDBProvider()
-    {
-        var builder = new ConfigurationBuilder().AddUserSecrets<TMDBProvider>();
-        Configuration = builder.Build();
-    }
-
-    private static IConfiguration? Configuration { get; set; }
-
     public async Task<List<Genre>> GetGenres()
     {
         try
         {
-            if (Configuration == null)
+            if (!SecretProviders.SecretsLoaded)
             {
                 throw new Exception("Configuration is null");
             }
-            else if (Configuration["THEMOVIEDB_API_KEY"] == null)
+            else if (Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY") == null)
             {
                 throw new Exception("Missing API key for TheMovieDb.");
             }
 
             var endpoint =
-                $"{baseUrl}/genre/movie/list?api_key={Configuration["THEMOVIEDB_API_KEY"]}&language=en-US";
+                $"{baseUrl}/genre/movie/list?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US";
             var request = new RestRequest(endpoint);
             var response = await client.ExecuteAsync(request);
             if (string.IsNullOrEmpty(response.Content))
@@ -58,17 +50,17 @@ public class TMDBProvider
     {
         try
         {
-            if (Configuration == null)
+            if (!SecretProviders.SecretsLoaded)
             {
                 throw new Exception("Configuration is null");
             }
-            else if (Configuration["THEMOVIEDB_API_KEY"] == null)
+            else if (Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY") == null)
             {
                 throw new Exception("Missing API key for TheMovieDb.");
             }
 
             var endpoint =
-                $"{baseUrl}/movie/{movieId}/credits?api_key={Configuration["THEMOVIEDB_API_KEY"]}&language=en-US";
+                $"{baseUrl}/movie/{movieId}/credits?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US";
             var request = new RestRequest(endpoint);
             var response = await client.ExecuteAsync(request);
             if (string.IsNullOrEmpty(response.Content))
@@ -96,17 +88,17 @@ public class TMDBProvider
         try
         {
             var genres = (await GetGenres()).ToDictionary(k => k.Id, v => v.Name ?? string.Empty);
-            if (Configuration == null)
+            if (!SecretProviders.SecretsLoaded)
             {
                 throw new Exception("Configuration is null");
             }
-            else if (Configuration["THEMOVIEDB_API_KEY"] == null)
+            else if (Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY") == null)
             {
                 throw new Exception("Missing API key for TheMovieDb.");
             }
 
             var endpoint =
-                $"{baseUrl}/movie/top_rated?api_key={Configuration["THEMOVIEDB_API_KEY"]}&language=en-US&page={page ?? 1}";
+                $"{baseUrl}/movie/top_rated?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US&page={page ?? 1}";
             var request = new RestRequest(endpoint);
             var response = await client.ExecuteAsync(request);
             if (string.IsNullOrEmpty(response.Content))
@@ -129,7 +121,7 @@ public class TMDBProvider
                 Parallel.For(2, 11, pg =>
                 {
                     endpoint =
-                        $"{baseUrl}/movie/top_rated?api_key={Configuration["THEMOVIEDB_API_KEY"]}&language=en-US&page={pg}";
+                        $"{baseUrl}/movie/top_rated?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US&page={pg}";
                     request = new RestRequest(endpoint);
                     response = client.ExecuteAsync(request).Result;
                     if (string.IsNullOrEmpty(response.Content))
