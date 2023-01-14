@@ -4,6 +4,12 @@ using RestSharp;
 
 namespace YAMDB.Providers;
 
+/// <summary>
+/// A provider class for injecting secrets into
+/// Environment variables using Doppler
+/// https://www.doppler.com
+/// Mimics how secrets are injected in the front end
+/// </summary>
 public class SecretProviders
 {
     private static readonly string baseUrl = "https://api.doppler.com/v3";
@@ -16,6 +22,7 @@ public class SecretProviders
 
     static SecretProviders()
     {
+        // We seed the initial provider token from the dotnet secret manager
         var builder = new ConfigurationBuilder().AddUserSecrets<SecretProviders>();
         Configuration = builder.Build();
     }
@@ -33,6 +40,9 @@ public class SecretProviders
             return;
         }
 
+        // Allows for separate secrets if running local
+        // We can set up other trace constants
+        // and more specific control
 #if DEBUG
         config = "local";
 #endif

@@ -1,7 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace YAMDB.Models;
 
+[Index(nameof(UUID), IsUnique = true)]
+[Index(nameof(Title))]
+[Index(nameof(Genres))]
+[Index(nameof(TheMovieDbId), IsUnique = true)]
 public class Movies
 {
     [JsonPropertyName("id")] public int Id { get; set; }

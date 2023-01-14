@@ -2,8 +2,17 @@
 
 namespace YAMDB.Api.Authentication;
 
+/// <summary>
+///     Validates the user has the required scope
+/// </summary>
 public class HasScopeHandler : AuthorizationHandler<HasScopeRequirement>
 {
+    /// <summary>
+    ///     Scope Requirement handler
+    /// </summary>
+    /// <param name="context">The auth context</param>
+    /// <param name="requirement">The requirement that must be met</param>
+    /// <returns></returns>
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         HasScopeRequirement requirement

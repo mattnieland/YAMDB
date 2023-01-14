@@ -4,6 +4,9 @@ using YAMDB.Models.TheMovieDb;
 
 namespace YAMDB.Providers;
 
+/// <summary>
+/// A provider class for TheMovieDb
+/// </summary>
 public class TMDBProvider
 {
     private static readonly string baseUrl = "https://api.themoviedb.org/3";

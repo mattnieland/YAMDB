@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using YAMDB.Api.Authentication;
@@ -13,19 +15,30 @@ using YAMDB.Contexts;
 using YAMDB.Providers;
 using static System.Net.Mime.MediaTypeNames;
 
+// Load the secrets from our provider
+SecretProviders.LoadSecrets();
+
 var builder = WebApplication.CreateBuilder(args);
 
+// default to lowercase URLs
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+// Add Gzip compression to responses
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
     options.Providers.Add<GzipCompressionProvider>();
 });
 
+// Inject the DbContext
 builder.Services.AddDbContext<YAMDBContext>();
+
+// Add our repositories
 builder.Services.AddScoped(typeof(IActorsRepository), typeof(ActorsRepository));
 builder.Services.AddScoped(typeof(IMoviesRepository), typeof(MoviesRepository));
 
+// default to indented and camel casing JSON
+// ignore looped references
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -34,15 +47,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-SecretProviders.LoadSecrets();
+#region Add Authorization (via Auth0)
+
 var domain = Environment.GetEnvironmentVariable("AUTH0_AUTHORITY");
 if (string.IsNullOrEmpty(domain))
 {
     throw new Exception("Auth0 domain is not set");
 }
 
-var audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
+var audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? "YOUR_API_IDENTIFIER";
 
+// authenticate with JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -54,6 +69,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// add scope policies
 builder.Services
     .AddAuthorization(options =>
     {
@@ -72,12 +88,27 @@ builder.Services
         );
     });
 
+// Add scope handler
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+
+#endregion
+
+#region Add Swagger
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
+    // Use XML comments in documentation
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    opt.IncludeXmlComments(xmlPath, true);
+
+    // Use annotations in documentation
+    opt.EnableAnnotations();
+
     opt.SwaggerDoc("v1", new OpenApiInfo {Title = "YAMDB Api", Version = "v1"});
+
+    // Add JWT authentication to the Swagger UI
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -104,8 +135,11 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
-var app = builder.Build();
+#endregion
 
+#region Ensure database is created (this will seed the data if in Development)
+
+var app = builder.Build();
 var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetService<YAMDBContext>();
 if (db == null)
@@ -115,12 +149,24 @@ if (db == null)
 
 db.Database.EnsureCreated();
 
-if (app.Environment.IsDevelopment())
+#endregion
+
+#region Set up branded Swagger files
+
+app.UseStaticFiles(new StaticFileOptions
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+    RequestPath = "/Content"
+});
+app.UseSwagger();
+app.UseSwaggerUI(setupAction => { setupAction.InjectStylesheet("/Content/css/swagger-custom.css"); });
+
+#endregion
+
+#region Exception Handling (for Production)
+
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(exceptionHandlerApp =>
     {
@@ -146,6 +192,8 @@ else
         });
     });
 }
+
+#endregion
 
 app.UseStatusCodePages();
 app.UseResponseCompression();

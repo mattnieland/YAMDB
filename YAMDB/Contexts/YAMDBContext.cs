@@ -6,15 +6,31 @@ namespace YAMDB.Contexts;
 
 public class YAMDBContext : DbContext
 {
-    public DbSet<Movies> Movies { get; set; }
-    public DbSet<Actors> Actors { get; set; }
-    public DbSet<ActorsInMovies> ActorsInMovies { get; set; }
-    public DbSet<MovieRatings> MovieRatings { get; set; }
+    public DbSet<Movies>? Movies { get; set; }
+    public DbSet<Actors>? Actors { get; set; }
+    public DbSet<ActorsInMovies>? ActorsInMovies { get; set; }
+    public DbSet<MovieRatings>? MovieRatings { get; set; }
 
     protected override void OnConfiguring
         (DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseInMemoryDatabase("YAMDB");
+
+        // Uncomment to support switching to in memory on dev
+        // and SQL Server on production
+        //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        //{
+        //    optionsBuilder.UseInMemoryDatabase("YAMDB");
+        //}
+        //else
+        //{
+        //    var connString = Environment.GetEnvironmentVariable("YAMDB_CONNECTION_STRING");
+        //    if (string.IsNullOrEmpty(connString))
+        //    {
+        //        throw new Exception("Database connection string is not set");
+        //    }
+        //    optionsBuilder.UseSqlServer(connString);
+        //}
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -22,6 +38,8 @@ public class YAMDBContext : DbContext
         modelBuilder.Entity<MovieRatings>();
         modelBuilder.Entity<Movies>();
         modelBuilder.Entity<ActorsInMovies>();
+
+        // support many-to-many relationship between movies and actors
         modelBuilder.Entity<Actors>()
             .HasMany(a => a.Movies)
             .WithMany(p => p.Actors)
@@ -37,6 +55,7 @@ public class YAMDBContext : DbContext
                 j => { j.HasKey(t => new {t.ActorId, t.MovieId}); })
             ;
 
+        // support many-to-many relationship between movies and actors
         modelBuilder.Entity<Movies>()
             .HasMany(a => a.Actors)
             .WithMany(p => p.Movies)
@@ -51,6 +70,8 @@ public class YAMDBContext : DbContext
                     .HasForeignKey(aim => aim.MovieId),
                 j => { j.HasKey(t => new {t.ActorId, t.MovieId}); })
             ;
+
+        #region Seed the development database
 
 #if DEBUG
         var tmdbProvider = new TMDBProvider();
@@ -131,5 +152,7 @@ public class YAMDBContext : DbContext
         #endregion
 
 #endif
+
+        #endregion
     }
 }
