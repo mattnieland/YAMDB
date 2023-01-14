@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAMDB.Api.Repositories;
 using YAMDB.Models;
@@ -17,7 +18,8 @@ public class ActorsController : ControllerBase
     }
 
     // DELETE api/<ActorController>/5
-    [HttpDelete]
+    [HttpDelete("{uuid:guid}")]
+    [Authorize("write:actors")]
     public IActionResult Delete(Guid uuid)
     {
         try
@@ -53,7 +55,7 @@ public class ActorsController : ControllerBase
     }
 
     // GET api/<ActorController>/5
-    [HttpGet]
+    [HttpGet("{uuid:guid}")]
     public IActionResult Get(Guid uuid)
     {
         try
@@ -74,6 +76,7 @@ public class ActorsController : ControllerBase
 
     // POST api/<ActorController>
     [HttpPost]
+    [Authorize("write:actors")]
     public IActionResult Post([FromBody] string value)
     {
         try
@@ -101,7 +104,8 @@ public class ActorsController : ControllerBase
     }
 
     // PUT api/<ActorController>/5
-    [HttpPut]
+    [HttpPut("{uuid:guid}")]
+    [Authorize("write:actors")]
     public IActionResult Put(Guid uuid, [FromBody] string value)
     {
         try

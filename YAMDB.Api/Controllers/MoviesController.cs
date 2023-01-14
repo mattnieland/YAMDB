@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAMDB.Api.Repositories;
 using YAMDB.Models;
@@ -18,7 +19,8 @@ public class MoviesController : ControllerBase
 
     // DELETE api/<MovieController>/5
     // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
-    [HttpDelete("{uuid:guid}")]
+    [HttpDelete]
+    [Authorize("write:movies")]
     public IActionResult Delete(Guid uuid)
     {
         try
@@ -54,7 +56,6 @@ public class MoviesController : ControllerBase
     }
 
     // GET api/<MovieController>/5
-    // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
     [HttpGet("{uuid:guid}")]
     public IActionResult Get(Guid uuid)
     {
@@ -76,6 +77,7 @@ public class MoviesController : ControllerBase
 
     // POST api/<MovieController>
     [HttpPost]
+    [Authorize("write:movies")]
     public IActionResult Post([FromBody] string value)
     {
         try
@@ -105,6 +107,7 @@ public class MoviesController : ControllerBase
     // PUT api/<MovieController>/5
     // ReSharper disable once RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
     [HttpPut("{uuid:guid}")]
+    [Authorize("write:movies")]
     public IActionResult Put(Guid uuid, [FromBody] string value)
     {
         try
