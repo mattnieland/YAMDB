@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using YAMDB.Api.Authentication;
 using YAMDB.Api.Repositories;
 using YAMDB.Contexts;
+using YAMDB.Models;
 using YAMDB.Providers;
 using static System.Net.Mime.MediaTypeNames;
+using Path = System.IO.Path;
 
 // Load the secrets from our provider
 SecretProviders.LoadSecrets();
@@ -36,6 +39,40 @@ builder.Services.AddDbContext<YAMDBContext>();
 // Add our repositories
 builder.Services.AddScoped(typeof(IActorsRepository), typeof(ActorsRepository));
 builder.Services.AddScoped(typeof(IMoviesRepository), typeof(MoviesRepository));
+
+// Add Logging
+var loggingConnectionString = Environment.GetEnvironmentVariable("LOGGING_CONNECTION_STRING");
+if (string.IsNullOrEmpty(loggingConnectionString))
+{
+    throw new Exception("Logging connection string is not set");
+}
+
+var logger = new LoggerConfiguration()
+    .WriteTo.AzureTableStorage(loggingConnectionString, storageTableName: "logs")
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
+// Add Sentry
+var dsn = Environment.GetEnvironmentVariable("SENTRY_DSN");
+if (!string.IsNullOrEmpty(dsn))
+{
+    builder.WebHost.UseSentry(o =>
+    {
+        o.Dsn = dsn;
+        o.Debug = true;
+        o.TracesSampleRate = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? 1.0 : .5;
+    });
+}
+
+// GraphQL (for fun)
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
 
 // default to indented and camel casing JSON
 // ignore looped references
@@ -137,9 +174,12 @@ builder.Services.AddSwaggerGen(opt =>
 
 #endregion
 
-#region Ensure database is created (this will seed the data if in Development)
 
 var app = builder.Build();
+app.UseSentryTracing();
+
+#region Ensure database is created (this will seed the data if in Development)
+
 var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetService<YAMDBContext>();
 if (db == null)
@@ -204,5 +244,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGraphQL(path: "/graphql");
 
 app.Run();

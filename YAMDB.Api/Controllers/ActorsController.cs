@@ -16,14 +16,17 @@ namespace YAMDB.Api.Controllers;
 public class ActorsController : ControllerBase
 {
     private readonly IActorsRepository _actorsRepository;
+    private readonly ILogger<ActorsController> _logger;
 
     /// <summary>
     ///     The controller for actor endpoints
     /// </summary>
     /// <param name="actorsRepository">A repository for working with actors</param>
-    public ActorsController(IActorsRepository actorsRepository)
+    /// <param name="logger">Our default logger</param>
+    public ActorsController(IActorsRepository actorsRepository, ILogger<ActorsController> logger)
     {
         _actorsRepository = actorsRepository;
+        _logger = logger;
     }
 
     /// <summary>
@@ -55,8 +58,9 @@ public class ActorsController : ControllerBase
             _actorsRepository.SaveAsync();
             return NoContent();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -77,8 +81,9 @@ public class ActorsController : ControllerBase
             var actors = _actorsRepository.FindAll();
             return new OkObjectResult(actors);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }
@@ -107,8 +112,9 @@ public class ActorsController : ControllerBase
 
             return new OkObjectResult(existingActor);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }
@@ -131,8 +137,9 @@ public class ActorsController : ControllerBase
             var actors = _actorsRepository.GetByMovieId(movieId);
             return new OkObjectResult(actors);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }
@@ -177,8 +184,9 @@ public class ActorsController : ControllerBase
             _actorsRepository.SaveAsync();
             return new OkObjectResult(actor);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }
@@ -218,15 +226,16 @@ public class ActorsController : ControllerBase
             _actorsRepository.SaveAsync();
             return new ObjectResult(actor) {StatusCode = StatusCodes.Status201Created};
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }
 
 
     /// <summary>
-    /// Advanced search for actors
+    ///     Advanced search for actors
     /// </summary>
     /// <param name="filter">The filter parameters</param>
     /// <returns>A list of actors</returns>
@@ -242,8 +251,9 @@ public class ActorsController : ControllerBase
             var actors = _actorsRepository.Search(filter);
             return new OkObjectResult(actors);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             throw;
         }
     }

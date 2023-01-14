@@ -5,7 +5,7 @@ using YAMDB.Models.TheMovieDb;
 namespace YAMDB.Providers;
 
 /// <summary>
-/// A provider class for TheMovieDb
+///     A provider class for TheMovieDb
 /// </summary>
 public class TMDBProvider
 {

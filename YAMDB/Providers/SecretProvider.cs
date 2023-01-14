@@ -5,10 +5,10 @@ using RestSharp;
 namespace YAMDB.Providers;
 
 /// <summary>
-/// A provider class for injecting secrets into
-/// Environment variables using Doppler
-/// https://www.doppler.com
-/// Mimics how secrets are injected in the front end
+///     A provider class for injecting secrets into
+///     Environment variables using Doppler
+///     https://www.doppler.com
+///     Mimics how secrets are injected in the front end
 /// </summary>
 public class SecretProviders
 {

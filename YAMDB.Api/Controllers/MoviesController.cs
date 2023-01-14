@@ -16,15 +16,19 @@ namespace YAMDB.Api.Controllers;
 [Produces("application/json")]
 public class MoviesController : ControllerBase
 {
+    private readonly ILogger<MoviesController> _logger;
     private readonly IMoviesRepository _moviesRepository;
 
     /// <summary>
     ///     The controller for movie endpoints
     /// </summary>
     /// <param name="moviesRepository">A repository for working with movies</param>
-    public MoviesController(IMoviesRepository moviesRepository)
+    /// <param name="logger">Our default logger</param>
+    /// ///
+    public MoviesController(IMoviesRepository moviesRepository, ILogger<MoviesController> logger)
     {
         _moviesRepository = moviesRepository;
+        _logger = logger;
     }
 
     /// <summary>
@@ -56,8 +60,9 @@ public class MoviesController : ControllerBase
             _moviesRepository.SaveAsync();
             return NoContent();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -86,8 +91,9 @@ public class MoviesController : ControllerBase
 
             return new OkObjectResult(existingMovie);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -108,8 +114,9 @@ public class MoviesController : ControllerBase
             var movies = _moviesRepository.FindAll();
             return new OkObjectResult(movies);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -132,8 +139,9 @@ public class MoviesController : ControllerBase
             var movies = _moviesRepository.GetByActorId(actorId);
             return new OkObjectResult(movies);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -178,8 +186,9 @@ public class MoviesController : ControllerBase
             _moviesRepository.SaveAsync();
             return new OkObjectResult(movie);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -228,8 +237,9 @@ public class MoviesController : ControllerBase
             _moviesRepository.SaveAsync();
             return new ObjectResult(movie) {StatusCode = StatusCodes.Status201Created};
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }
@@ -251,8 +261,9 @@ public class MoviesController : ControllerBase
             var movies = _moviesRepository.Search(filter);
             return new OkObjectResult(movies);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message, ex);
             throw;
         }
     }

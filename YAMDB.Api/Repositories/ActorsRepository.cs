@@ -44,7 +44,7 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
         {
             return Enumerable.Empty<Actors>().AsQueryable();
         }
-        
+
         return actorMovies.Select(aim => aim.Actor!);
     }
 
@@ -61,7 +61,7 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
 
         // apply sort & filter
         query = query.ToFilterView(filter);
-        
+
         return query;
     }
 }

@@ -6,8 +6,8 @@ using YAMDB.Models;
 namespace YAMDB.Extensions;
 
 /// <summary>
-/// Credit to https://hodo.dev/posts/post-03-dynamic-filter-ef
-/// For original concept
+///     Credit to https://hodo.dev/posts/post-03-dynamic-filter-ef
+///     For original concept
 /// </summary>
 public static class QueryableExtensions
 {
@@ -88,11 +88,11 @@ public static class QueryableExtensions
     {
         //if (filter is {Logic: { }})
         //{
-            var filters = GetAllFilters(filter);
-            var values = filters.Select(f => f.Value).ToArray();
-            var where = Transform(filter, filters);
-            // ReSharper disable once CoVariantArrayConversion
-            queryable = queryable.Where(where, values);
+        var filters = GetAllFilters(filter);
+        var values = filters.Select(f => f.Value).ToArray();
+        var where = Transform(filter, filters);
+        // ReSharper disable once CoVariantArrayConversion
+        queryable = queryable.Where(where, values);
         //}
         return queryable;
     }
@@ -109,7 +109,7 @@ public static class QueryableExtensions
         //}
         //else
         //{
-            filters.Add(filter);
+        filters.Add(filter);
         //}
     }
 
