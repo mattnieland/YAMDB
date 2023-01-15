@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using YAMDB.Api.Middleware.RateLimiting;
@@ -100,31 +99,6 @@ public class MoviesController : ControllerBase
     }
 
     /// <summary>
-    ///     Retrieve all movies
-    /// </summary>
-    /// <returns>A list of movies</returns>
-    [HttpGet]
-    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
-    [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
-    [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
-    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Get(int? page = 1, int? size = 50)
-    {
-        try
-        {
-            var movies = _moviesRepository.FindAll(page!.Value, size!.Value);
-            return new OkObjectResult(movies);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message, ex);
-            throw;
-        }
-    }
-
-    /// <summary>
     ///     Get movies by an actor
     /// </summary>
     /// <param name="actorId">The unique GUID for the actor</param>
@@ -153,6 +127,31 @@ public class MoviesController : ControllerBase
     ///     Retrieve all movies
     /// </summary>
     /// <returns>A list of movies</returns>
+    [HttpGet]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
+    public IActionResult List(int? page = 1, int? size = 50)
+    {
+        try
+        {
+            var movies = _moviesRepository.FindAll(page!.Value, size!.Value);
+            return new OkObjectResult(movies);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieve all movies
+    /// </summary>
+    /// <returns>A list of movies</returns>
     [HttpGet("cursor")]
     [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
     [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
@@ -160,7 +159,7 @@ public class MoviesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult GetCursor(Guid? after, int? size = 50)
+    public IActionResult ListCursor(Guid? after, int? size = 50)
     {
         try
         {
@@ -180,7 +179,7 @@ public class MoviesController : ControllerBase
     /// <param name="movie">A movie object</param>
     /// <returns>A movie object</returns>
     [HttpPost]
-    [SwaggerResponse(StatusCodes.Status201Created)]
+    [SwaggerResponse(StatusCodes.Status200OK, "A movie object", typeof(Movies))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict, "The movie already exists")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
@@ -225,7 +224,7 @@ public class MoviesController : ControllerBase
     ///     Update a movie object
     /// </summary>
     /// <param name="uuid">The unique GUID for the movie</param>
-    /// <param name="value">The new movie object</param>
+    /// <param name="movie">The new movie object</param>
     /// <returns>201 Created</returns>
     [HttpPut("{uuid:guid}")]
     [SwaggerResponse(StatusCodes.Status201Created)]
@@ -234,30 +233,21 @@ public class MoviesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
     [Authorize("write:movies")]
-    public IActionResult Put(Guid uuid, [FromBody] string value)
+    public IActionResult Put(Guid uuid, [FromBody] Movies movie)
     {
         try
         {
+            // check that it at least has an id
+            if (movie.Id == 0)
+            {
+                return BadRequest();
+            }
+
             // check that the object exists
             var existingMovie = _moviesRepository.FindByCondition(a => a.UUID == uuid).FirstOrDefault();
             if (existingMovie == null)
             {
                 return NotFound();
-            }
-
-            Movies? movie;
-            try
-            {
-                // deserialize the body and validate it has an id
-                movie = JsonSerializer.Deserialize<Movies>(value);
-                if (movie == null || movie.Id == 0)
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception)
-            {
-                return BadRequest();
             }
 
             // update and save
@@ -275,7 +265,7 @@ public class MoviesController : ControllerBase
     /// <summary>
     ///     Advanced search for movies
     /// </summary>
-    /// <param name="filter">The filter parameters</param>
+    /// <param name="search">The filter parameters</param>
     /// <returns>A list of movies</returns>
     [HttpPost("search")]
     [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
@@ -284,11 +274,11 @@ public class MoviesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Search([FromBody] DynamicSearch filter)
+    public IActionResult Search([FromBody] DynamicSearch search)
     {
         try
         {
-            var movies = _moviesRepository.Search(filter);
+            var movies = _moviesRepository.Search(search);
             return new OkObjectResult(movies);
         }
         catch (Exception ex)

@@ -6,10 +6,77 @@ namespace YAMDB.Contexts;
 
 public class YAMDBContext : DbContext
 {
-    public DbSet<Movies>? Movies { get; set; }
-    public DbSet<Actors>? Actors { get; set; }
-    public DbSet<ActorsInMovies>? ActorsInMovies { get; set; }
-    public DbSet<MovieRatings>? MovieRatings { get; set; }
+    public virtual DbSet<Movies>? Movies { get; set; }
+    public virtual DbSet<Actors>? Actors { get; set; }
+    public virtual DbSet<ActorsInMovies>? ActorsInMovies { get; set; }
+    public virtual DbSet<MovieRatings>? MovieRatings { get; set; }
+
+    public static SeedData GetSeedData()
+    {
+        var seedData = new SeedData();
+        var tmdbProvider = new TMDBProvider();
+        var genres = tmdbProvider.GetGenres().Result.ToDictionary(k => k.Id, v => v.Name);
+        var topMovies = tmdbProvider.GetTopMovies(1).Result;
+
+        var seedMovies = topMovies.Select((tm, index) => new Movies
+        {
+            Id = index + 1,
+            Title = tm.Title,
+            Description = tm.Overview,
+            ImageUrl = tm.PosterPath,
+            TheMovieDbId = tm.Id,
+            ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
+            Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
+        }).ToList();
+        var seedRatings = topMovies.Select((tm, index) => new MovieRatings
+        {
+            Id = index + 1,
+            MovieId = index + 1,
+            Rating = tm.VoteAverage,
+            RatingUpperLimit = 10,
+            TotalReviews = tm.VoteCount,
+            Source = "TheMovieDB"
+        }).ToList();
+
+        var seedActors = new List<Actors>();
+        var seedActorsInMovies = new List<ActorsInMovies>();
+        var movieIndex = 1;
+        var actorIndex = 1;
+        foreach (var movie in topMovies)
+        {
+            var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
+            movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
+
+            foreach (var castMember in movieCast)
+            {
+                var actor = new Actors
+                {
+                    Id = actorIndex,
+                    Name = castMember.Name,
+                    TheMovieDbId = castMember.Id
+                };
+                seedActors.Add(actor);
+
+                var actorMovie = new ActorsInMovies
+                {
+                    ActorId = actorIndex,
+                    MovieId = movieIndex,
+                    CharacterName = castMember.Character
+                };
+                seedActorsInMovies.Add(actorMovie);
+
+                actorIndex++;
+            }
+
+            movieIndex++;
+        }
+
+        seedData.Movies = seedMovies;
+        seedData.Ratings = seedRatings;
+        seedData.Actors = seedActors;
+        seedData.ActorsInMovies = seedActorsInMovies;
+        return seedData;
+    }
 
     protected override void OnConfiguring
         (DbContextOptionsBuilder optionsBuilder)
@@ -74,83 +141,11 @@ public class YAMDBContext : DbContext
         #region Seed the development database
 
 #if DEBUG
-        var tmdbProvider = new TMDBProvider();
-        var genres = tmdbProvider.GetGenres().Result.ToDictionary(k => k.Id, v => v.Name);
-        var topMovies = tmdbProvider.GetTopMovies(1).Result;
-
-        #region Seed Movies & Ratings
-
-        var seedMovies = topMovies.Select((tm, index) => new Movies
-        {
-            Id = index + 1,
-            Title = tm.Title,
-            Description = tm.Overview,
-            ImageUrl = tm.PosterPath,
-            TheMovieDbId = tm.Id,
-            ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
-            Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
-        }).ToList();
-
-        modelBuilder.Entity<Movies>().HasData(seedMovies);
-
-        #region Seed Movie Ratings
-
-        var seedRatings = topMovies.Select((tm, index) => new MovieRatings
-        {
-            Id = index + 1,
-            MovieId = index + 1,
-            Rating = tm.VoteAverage,
-            RatingUpperLimit = 10,
-            TotalReviews = tm.VoteCount,
-            Source = "TheMovieDB"
-        }).ToList();
-
-        #endregion
-
-        modelBuilder.Entity<MovieRatings>().HasData(seedRatings);
-
-        #endregion
-
-        #region Seed Actors & Actors In Movies
-
-        var seedActors = new List<Actors>();
-        var seedActorsInMovies = new List<ActorsInMovies>();
-        var movieIndex = 1;
-        var actorIndex = 1;
-        foreach (var movie in topMovies)
-        {
-            var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
-            movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
-
-            foreach (var castMember in movieCast)
-            {
-                var actor = new Actors
-                {
-                    Id = actorIndex,
-                    Name = castMember.Name,
-                    TheMovieDbId = castMember.Id
-                };
-                seedActors.Add(actor);
-
-                var actorMovie = new ActorsInMovies
-                {
-                    ActorId = actorIndex,
-                    MovieId = movieIndex,
-                    CharacterName = castMember.Character
-                };
-                seedActorsInMovies.Add(actorMovie);
-
-                actorIndex++;
-            }
-
-            movieIndex++;
-        }
-
-        modelBuilder.Entity<Actors>().HasData(seedActors);
-        modelBuilder.Entity<ActorsInMovies>().HasData(seedActorsInMovies);
-
-        #endregion
-
+        var seedData = GetSeedData();
+        modelBuilder.Entity<Movies>().HasData(seedData.Movies);
+        modelBuilder.Entity<MovieRatings>().HasData(seedData.Ratings);
+        modelBuilder.Entity<Actors>().HasData(seedData.Actors);
+        modelBuilder.Entity<ActorsInMovies>().HasData(seedData.ActorsInMovies);
 #endif
 
         #endregion

@@ -77,7 +77,7 @@ public class ActorsController : ControllerBase
     [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Get([FromQuery] int? page = 1, [FromQuery] int? size = 50)
+    public IActionResult List([FromQuery] int? page = 1, [FromQuery] int? size = 50)
     {
         try
         {
@@ -158,7 +158,7 @@ public class ActorsController : ControllerBase
     [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult GetCursor([FromQuery] Guid? after, [FromQuery] int? size = 50)
+    public IActionResult ListCursor([FromQuery] Guid? after, [FromQuery] int? size = 50)
     {
         try
         {
@@ -178,7 +178,7 @@ public class ActorsController : ControllerBase
     /// <param name="actor">An actor object</param>
     /// <returns>An actor object</returns>
     [HttpPost]
-    [SwaggerResponse(StatusCodes.Status201Created)]
+    [SwaggerResponse(StatusCodes.Status200OK, "A movie object", typeof(Actors))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict, "The actor already exists")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
@@ -265,7 +265,7 @@ public class ActorsController : ControllerBase
     /// <summary>
     ///     Advanced search for actors
     /// </summary>
-    /// <param name="filter">The filter parameters</param>
+    /// <param name="search">The filter parameters</param>
     /// <returns>A list of actors</returns>
     [HttpPost("search")]
     [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
@@ -274,11 +274,11 @@ public class ActorsController : ControllerBase
     [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Search([FromBody] DynamicSearch filter)
+    public IActionResult Search([FromBody] DynamicSearch search)
     {
         try
         {
-            var actors = _actorsRepository.Search(filter);
+            var actors = _actorsRepository.Search(search);
             return new OkObjectResult(actors);
         }
         catch (Exception ex)

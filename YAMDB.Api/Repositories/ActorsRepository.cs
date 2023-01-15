@@ -57,6 +57,7 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
     {
         var query = Context
             .Actors!
+            .AsNoTracking()
             .AsQueryable();
 
         // apply sort & filter
@@ -73,10 +74,11 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
     /// <returns>The list of objects</returns>
     public Paging<Actors> FindAll(int page, int size)
     {
-        var total = Context.Actors!.Count();
+        var total = Context.Actors!.AsNoTracking().Count();
         var pages = (int) Math.Ceiling((double) total / size);
         var morePages = page < pages;
         var results = Context.Actors!
+            .AsNoTracking()
             .OrderBy(x => x.Id)
             .Skip((page - 1) * size)
             .Take(size)
@@ -101,13 +103,14 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
     /// <returns>The list of objects</returns>
     public PagingCursor<Actors> FindAllCursor(Guid? after, int size)
     {
-        var total = Context.Actors!.Count();
+        var total = Context.Actors!.AsNoTracking().Count();
         Actors? currentObject = null;
         if (after != null)
         {
             currentObject = Context.Actors!.FirstOrDefault(x => x.UUID == after);
         }
         var results = Context.Actors!
+            .AsNoTracking()
             .OrderBy(x => x.Id)
             .Where(x => x.Id > (currentObject != null ? currentObject.Id : 0))
             .Take(size)

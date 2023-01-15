@@ -29,6 +29,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
     public IQueryable<Movies> GetByActorId(Guid actorId)
     {
         var actor = Context.Actors?
+            .AsNoTracking()
             .FirstOrDefault(m => m.UUID == actorId);
         if (actor == null)
         {
@@ -37,6 +38,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
 
         var actorMovies = Context
             .ActorsInMovies?
+            .AsNoTracking()
             .Include(a => a.Movie)
             .Where(aim => aim.ActorId == actor.Id);
 
@@ -57,6 +59,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
     {
         var query = Context
             .Movies!
+            .AsNoTracking()
             .AsQueryable();
 
         // apply sort & filter
@@ -73,10 +76,11 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
     /// <returns>The list of objects</returns>
     public Paging<Movies> FindAll(int page, int size)
     {
-        var total = Context.Movies!.Count();
+        var total = Context.Movies!.AsNoTracking().Count();
         var pages = (int) Math.Ceiling((double) total / size);
         var morePages = page < pages;
         var results = Context.Movies!
+            .AsNoTracking()
             .OrderBy(x => x.Id)
             .Skip((page - 1) * size)
             .Take(size)
@@ -101,7 +105,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
     /// <returns>The list of objects</returns>
     public PagingCursor<Movies> FindAllCursor(Guid? after, int size)
     {
-        var total = Context.Movies!.Count();
+        var total = Context.Movies!.AsNoTracking().Count();
         Movies? currentObject = null;
         if (after != null)
         {
@@ -109,6 +113,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
         }
 
         var results = Context.Movies!
+            .AsNoTracking()
             .OrderBy(x => x.Id)
             .Where(x => x.Id > (currentObject != null ? currentObject.Id : 0))
             .Take(size)
