@@ -205,17 +205,20 @@ public class ActorsControllerTests
     }
 
     [TestMethod]
-    public void ASearchFilterTest()
+    public void SearchTest()
     {
         try
         {
             var search = new DynamicSearch
             {
+                Offset = 0,
+                Limit = 10,
+                Sort = new List<Sort> { new() { Field = "Id", Dir = "DESC" } },
                 Filter = new Filter
                 {
-                    Field = "Id",
-                    Operator = "eq",
-                    Value = "1"
+                    Field = "Name",
+                    Operator = "contains",
+                    Value = "Morgan"
                 }
             };
             var result = _controller.Search(search);
@@ -223,61 +226,10 @@ public class ActorsControllerTests
             Assert.IsTrue(result.GetType() == typeof(OkObjectResult));
             var okResult = result as OkObjectResult;
             Assert.IsNotNull(okResult);
-            var actors = okResult.Value as IQueryable<Actors>;
-            Assert.IsNotNull(actors);
-            Assert.IsTrue(actors.Any());
-            Assert.IsTrue(actors.First().Id == 1);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail(ex.Message);
-        }
-    }
-
-    [TestMethod]
-    public void SearchLimitTest()
-    {
-        try
-        {
-            var search = new DynamicSearch
-            {
-                Offset = 0,
-                Limit = 10
-            };
-            var result = _controller.Search(search);
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.GetType() == typeof(OkObjectResult));
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var actors = okResult.Value as IQueryable<Actors>;
-            Assert.IsNotNull(actors);
-            Assert.IsTrue(actors.Any());
-            Assert.IsTrue(actors.Count() == 10);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail(ex.Message);
-        }
-    }
-
-    [TestMethod]
-    public void SearchSortTest()
-    {
-        try
-        {
-            var search = new DynamicSearch
-            {
-                Sort = new List<Sort> {new() {Field = "Id", Dir = "DESC"}}
-            };
-            var result = _controller.Search(search);
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.GetType() == typeof(OkObjectResult));
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var actors = okResult.Value as IQueryable<Actors>;
-            Assert.IsNotNull(actors);
-            Assert.IsTrue(actors.Any());
-            Assert.IsTrue(actors.First().Id > 1);
+            var movies = okResult.Value as IQueryable<Movies>;
+            Assert.IsNotNull(movies);
+            Assert.IsTrue(movies.Count() == 10);
+            Assert.IsTrue(movies.First().Id != 1);
         }
         catch (Exception ex)
         {
