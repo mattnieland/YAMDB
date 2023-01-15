@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using YAMDB.Api.Authentication;
+using YAMDB.Api.Extensions;
 using YAMDB.Api.Repositories;
 using YAMDB.Contexts;
 using YAMDB.Models;
@@ -130,6 +131,8 @@ builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
 #endregion
 
+builder.Services.AddDistributedMemoryCache();
+
 #region Add Swagger
 
 builder.Services.AddEndpointsApiExplorer();
@@ -173,7 +176,6 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 #endregion
-
 
 var app = builder.Build();
 app.UseSentryTracing();
@@ -244,6 +246,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Add Custom Rate Limiting middleware
+app.UseRateLimiting();
 
 app.MapGraphQL(path: "/graphql");
 

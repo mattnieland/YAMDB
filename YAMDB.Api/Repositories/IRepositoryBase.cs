@@ -21,12 +21,6 @@ public interface IRepositoryBase<T>
     void DeleteAsync(T entity);
 
     /// <summary>
-    ///     Retrieve all objects
-    /// </summary>
-    /// <returns>A list of objects</returns>
-    IQueryable<T> FindAll();
-
-    /// <summary>
     ///     Find objects using a condition
     /// </summary>
     /// <param name="expression">The lambda expression to apply</param>

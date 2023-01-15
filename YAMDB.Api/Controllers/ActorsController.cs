@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using YAMDB.Api.Middleware.RateLimiting;
 using YAMDB.Api.Repositories;
 using YAMDB.Models;
 
@@ -70,15 +71,17 @@ public class ActorsController : ControllerBase
     /// </summary>
     /// <returns>A list of actors</returns>
     [HttpGet]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
     [SwaggerResponse(StatusCodes.Status200OK, "List of actors", typeof(IEnumerable<Actors>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Get()
+    public IActionResult Get([FromQuery] int? page = 1, [FromQuery] int? size = 50)
     {
         try
         {
-            var actors = _actorsRepository.FindAll();
+            var actors = _actorsRepository.FindAll(page!.Value, size!.Value);
             return new OkObjectResult(actors);
         }
         catch (Exception ex)
@@ -135,6 +138,31 @@ public class ActorsController : ControllerBase
         try
         {
             var actors = _actorsRepository.GetByMovieId(movieId);
+            return new OkObjectResult(actors);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieve all actors
+    /// </summary>
+    /// <returns>A list of actors</returns>
+    [HttpGet("cursor")]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of actors", typeof(IEnumerable<Actors>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
+    public IActionResult GetCursor([FromQuery] Guid? after, [FromQuery] int? size = 50)
+    {
+        try
+        {
+            var actors = _actorsRepository.FindAllCursor(after, size!.Value);
             return new OkObjectResult(actors);
         }
         catch (Exception ex)
@@ -240,11 +268,13 @@ public class ActorsController : ControllerBase
     /// <param name="filter">The filter parameters</param>
     /// <returns>A list of actors</returns>
     [HttpPost("search")]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
     [SwaggerResponse(StatusCodes.Status200OK, "List of actors", typeof(IEnumerable<Actors>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Search([FromBody] FilterDTO filter)
+    public IActionResult Search([FromBody] DynamicSearch filter)
     {
         try
         {

@@ -53,7 +53,7 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
     /// </summary>
     /// <param name="filter">filter object</param>
     /// <returns>A list of movies</returns>
-    public IQueryable<Movies> Search(FilterDTO filter)
+    public IQueryable<Movies> Search(DynamicSearch filter)
     {
         var query = Context
             .Movies!
@@ -63,5 +63,66 @@ public class MoviesRepository : RepositoryBase<Movies>, IMoviesRepository
         query = query.ToFilterView(filter);
 
         return query;
+    }
+
+    /// <summary>
+    ///     Retrieve a list of objects
+    /// </summary>
+    /// <param name="page">Page to return</param>
+    /// <param name="size">The page size</param>
+    /// <returns>The list of objects</returns>
+    public Paging<Movies> FindAll(int page, int size)
+    {
+        var total = Context.Movies!.Count();
+        var pages = (int) Math.Ceiling((double) total / size);
+        var morePages = page < pages;
+        var results = Context.Movies!
+            .OrderBy(x => x.Id)
+            .Skip((page - 1) * size)
+            .Take(size)
+            .AsQueryable();
+
+        return new Paging<Movies>
+        {
+            Page = page,
+            Size = size,
+            Total = total,
+            Pages = pages,
+            MorePages = morePages,
+            Results = results
+        };
+    }
+
+    /// <summary>
+    ///     Cursor style paging retrieval
+    /// </summary>
+    /// <param name="after">The cursor value</param>
+    /// <param name="size">The page size</param>
+    /// <returns>The list of objects</returns>
+    public PagingCursor<Movies> FindAllCursor(Guid? after, int size)
+    {
+        var total = Context.Movies!.Count();
+        Movies? currentObject = null;
+        if (after != null)
+        {
+            currentObject = Context.Movies!.FirstOrDefault(x => x.UUID == after);
+        }
+
+        var results = Context.Movies!
+            .OrderBy(x => x.Id)
+            .Where(x => x.Id > (currentObject != null ? currentObject.Id : 0))
+            .Take(size)
+            .AsQueryable();
+
+        return new PagingCursor<Movies>
+        {
+            Cursor = new Cursor
+            {
+                After = results.LastOrDefault()?.UUID,
+                Before = results.FirstOrDefault()?.UUID,
+                Total = total
+            },
+            Results = results
+        };
     }
 }

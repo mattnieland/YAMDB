@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <UserSecretsId>43d83252-302c-4942-9b0b-0c890dc0e840</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>43d83252-302c-4942-9b0b-0c890dc0e840</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.16.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.0" />
-    <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.24" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.16.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="RestSharp" Version="108.0.3" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.24" />
+	</ItemGroup>
 
 </Project>

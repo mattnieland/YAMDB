@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using YAMDB.Api.Middleware.RateLimiting;
 using YAMDB.Api.Repositories;
 using YAMDB.Models;
 
@@ -103,15 +104,17 @@ public class MoviesController : ControllerBase
     /// </summary>
     /// <returns>A list of movies</returns>
     [HttpGet]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
     [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Get()
+    public IActionResult Get(int? page = 1, int? size = 50)
     {
         try
         {
-            var movies = _moviesRepository.FindAll();
+            var movies = _moviesRepository.FindAll(page!.Value, size!.Value);
             return new OkObjectResult(movies);
         }
         catch (Exception ex)
@@ -137,6 +140,31 @@ public class MoviesController : ControllerBase
         try
         {
             var movies = _moviesRepository.GetByActorId(actorId);
+            return new OkObjectResult(movies);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieve all movies
+    /// </summary>
+    /// <returns>A list of movies</returns>
+    [HttpGet("cursor")]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
+    public IActionResult GetCursor(Guid? after, int? size = 50)
+    {
+        try
+        {
+            var movies = _moviesRepository.FindAllCursor(after, size!.Value);
             return new OkObjectResult(movies);
         }
         catch (Exception ex)
@@ -250,11 +278,13 @@ public class MoviesController : ControllerBase
     /// <param name="filter">The filter parameters</param>
     /// <returns>A list of movies</returns>
     [HttpPost("search")]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
     [SwaggerResponse(StatusCodes.Status200OK, "List of movies", typeof(IEnumerable<Actors>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult Search([FromBody] FilterDTO filter)
+    public IActionResult Search([FromBody] DynamicSearch filter)
     {
         try
         {

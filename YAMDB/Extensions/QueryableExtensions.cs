@@ -34,7 +34,7 @@ public static class QueryableExtensions
     }
 
     public static IQueryable<T> ToFilterView<T>(
-        this IQueryable<T> query, FilterDTO filter)
+        this IQueryable<T> query, DynamicSearch filter)
     {
         // filter
         if (filter.Filter != null)

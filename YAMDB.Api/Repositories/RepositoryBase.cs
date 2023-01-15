@@ -22,15 +22,6 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     private YAMDBContext Context { get; set; }
 
     /// <summary>
-    ///     Retrieve all objects
-    /// </summary>
-    /// <returns>A list of objects</returns>
-    public IQueryable<T> FindAll()
-    {
-        return Context.Set<T>().AsNoTracking();
-    }
-
-    /// <summary>
     ///     Find an object by its id
     /// </summary>
     /// <param name="id">The object key</param>

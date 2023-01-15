@@ -5,7 +5,6 @@ public class Filter
 {
     public string Field { get; set; }
     public string Operator { get; set; }
-
     public string Value { get; set; }
     //public string? Logic { get; set; }
     //public IEnumerable<Filter>? Filters { get; set; }
@@ -17,7 +16,7 @@ public class Sort
     public string Dir { get; set; }
 }
 
-public class FilterDTO
+public class DynamicSearch
 {
     public int? Offset { get; set; }
     public int? Limit { get; set; }
