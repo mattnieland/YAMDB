@@ -101,7 +101,7 @@ This API was built with the following tools:
 
 
 
-<!-- GETTING STARTED -->
+<!-- GTTING STARTED -->
 ## Getting Started
 
 The default template uses in memory database and seeds
