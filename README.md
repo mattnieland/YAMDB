@@ -136,13 +136,15 @@ Finally, base64 encode (https://www.base64encode.org) the string and run the fol
   dotnet user-secrets set "DOPPLER_TOKEN" "YOUR_DOPPLER_TOKEN_HERE"
   ```
 
-That's it!  You're ready to compile and run via Visual Studio or VS Code.
+* Alternatively, you may use the appsettings.json or Debug/Release transforms to set this value
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+That's it!  You're ready to compile and run via Visual Studio or VS Code.
 
 ### Authentication
 Authentication is done via Auth0.  Create/Update/Delete endpoints require write:movies & write:actors scopes
 to work.  To get a Bearer token, use this guide (https://auth0.com/docs/secure/tokens/access-tokens/get-access-tokens)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 ## Contributing
