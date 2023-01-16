@@ -21,7 +21,7 @@ public class TMDBProviderTests
         var topMovie = provider.GetTopMovies(1).Result.FirstOrDefault();
         Assert.IsNotNull(topMovie);
 
-        var cast = provider.GetMovieCast(topMovie.Id).Result;
+        var cast = provider.GetMovieCast(topMovie.Id!.Value).Result;
         Assert.IsTrue(cast.Any());
     }
 

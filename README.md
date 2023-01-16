@@ -8,7 +8,7 @@
 [![Issues][issues-shield]][issues-url]
 -->
 [![yamdb-dev](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml)
-[![yamdb-main](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-main.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-main.yml)
+[![yamdb-prod](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-prod.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-prod.yml)
 
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
@@ -23,13 +23,13 @@
   <h3 align="center">YAMDB (Yet Another Movie Db)</h3>
 
   <p align="center">
-    <a href="https://github.com/mattnieland/YAMDB"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/mattnieland/YAMDB"><strong>Explore the docs Â»</strong></a>
     <br />
     <br />
     <a href="https://github.com/mattnieland/YAMDB">View Demo</a>
-    ·
+    Â·
     <a href="https://github.com/mattnieland/YAMDB/issues">Report Bug</a>
-    ·
+    Â·
     <a href="https://github.com/mattnieland/YAMDB/issues">Request Feature</a>
   </p>
 </div>
@@ -109,7 +109,7 @@ its data from TheMovieDb.  You can enable/disable any of the "extras" like Doppl
 read on.
 
 ### Prerequisites
-You need the following pre-requisites to run thi project:
+You need the following pre-requisites to run this project:
 * A TheMovieDb API key (refer to this documentation: https://developers.themoviedb.org/3/getting-started/introduction)
 * A Doppler account with a project (use local/dev/prod config environments)
 * An Auth0 account (create an API & the write:movies & write:actors scopes using this guide: https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/interactive)

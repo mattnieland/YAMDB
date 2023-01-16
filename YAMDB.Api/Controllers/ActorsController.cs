@@ -188,8 +188,8 @@ public class ActorsController : ControllerBase
     {
         try
         {
-            // check that it at least has an id
-            if (actor.Id == 0)
+            // check that it at least has an name
+            if (actor.Name == null)
             {
                 return BadRequest();
             }
@@ -236,8 +236,8 @@ public class ActorsController : ControllerBase
     {
         try
         {
-            // check that it at least has an id
-            if (actor.Id == 0)
+            // check that it at least has an name
+            if (actor.Name == null)
             {
                 return BadRequest();
             }

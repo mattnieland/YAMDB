@@ -7,20 +7,26 @@
 		<UserSecretsId>1db98c7f-fbef-40cb-a20a-5c60b98152eb</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Configurations>Local;Dev;Prod</Configurations>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<NoWarn>1701;1702;CA2254</NoWarn>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|AnyCPU'">
+	  <NoWarn>1701;1702;CA2254</NoWarn>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<NoWarn>1701;1702;CA2254</NoWarn>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Local|AnyCPU'">
+	  <NoWarn>1701;1702;CA2254</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Prod|AnyCPU'">
+	  <NoWarn>1701;1702;CA2254</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="appsettings.Debug.json" />
+	  <Content Remove="appsettings.Dev.json" />
 	  <Content Remove="appsettings.json" />
-	  <Content Remove="appsettings.Release.json" />
+	  <Content Remove="appsettings.Local.json" />
+	  <Content Remove="appsettings.Prod.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,24 +35,32 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Content\css\swagger-custom.css" />
+		<Content Include="Content\css\swagger-custom.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Content\images\logo.png" />
+		<EmbeddedResource Include="Content\images\logo.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="appsettings.Debug.json">
-	    <DependentUpon>appsettings.json</DependentUpon>
+	  <None Include="appsettings.Dev.json">
 	    <IsTransformFile>true</IsTransformFile>
+	    <DependentUpon>appsettings.json</DependentUpon>
 	  </None>
 	  <None Include="appsettings.json">
 	    <TransformOnBuild>true</TransformOnBuild>
 	  </None>
-	  <None Include="appsettings.Release.json">
-	    <DependentUpon>appsettings.json</DependentUpon>
+	  <None Include="appsettings.Local.json">
 	    <IsTransformFile>true</IsTransformFile>
+	    <DependentUpon>appsettings.json</DependentUpon>
+	  </None>
+	  <None Include="appsettings.Prod.json">
+	    <IsTransformFile>true</IsTransformFile>
+	    <DependentUpon>appsettings.json</DependentUpon>
 	  </None>
 	</ItemGroup>
 
@@ -64,6 +78,10 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="4.0.8">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
 		<PackageReference Include="Sentry.AspNetCore" Version="3.26.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />

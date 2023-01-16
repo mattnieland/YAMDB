@@ -7,6 +7,7 @@ using YAMDB.Api.Controllers;
 using YAMDB.Api.Repositories;
 using YAMDB.Contexts;
 using YAMDB.Models;
+using YAMDB.Providers;
 
 namespace YAMDB.Tests.Controllers;
 
@@ -18,6 +19,7 @@ public class MoviesControllerTests
 
     public MoviesControllerTests()
     {
+        SecretProviders.LoadSecrets();
         _context = new YAMDBContext();
         _context.Database.EnsureCreated();
 
@@ -147,12 +149,16 @@ public class MoviesControllerTests
     {
         try
         {
+            var movies = _context.Movies!.AsNoTracking().ToList();
+            Assert.IsNotNull(movies);
+            Assert.IsTrue(movies.Any());
+            var highestMovieDbId = movies.Max(a => a.TheMovieDbId);
+
             var movie = new Movies
             {
-                Id = -1,
                 Title = "Test Movie",
                 UUID = Guid.NewGuid(),
-                TheMovieDbId = -1
+                TheMovieDbId = highestMovieDbId + 1
             };
 
             // create dummy movie
@@ -165,7 +171,7 @@ public class MoviesControllerTests
             // validate that the movie was created
             var createdMovies = okResult.Value as Movies;
             Assert.IsNotNull(createdMovies);
-            Assert.IsTrue(createdMovies.Id == -1);
+            Assert.IsTrue(createdMovies.Title == "Test Movie");
         }
         catch (Exception ex)
         {

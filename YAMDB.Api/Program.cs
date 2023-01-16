@@ -19,10 +19,10 @@ using YAMDB.Providers;
 using static System.Net.Mime.MediaTypeNames;
 using Path = System.IO.Path;
 
+var builder = WebApplication.CreateBuilder(args);
+
 // Load the secrets from our provider
 SecretProviders.LoadSecrets();
-
-var builder = WebApplication.CreateBuilder(args);
 
 // default to lowercase URLs
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
