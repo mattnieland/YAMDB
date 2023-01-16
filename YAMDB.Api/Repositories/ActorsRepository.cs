@@ -109,6 +109,7 @@ public class ActorsRepository : RepositoryBase<Actors>, IActorsRepository
         {
             currentObject = Context.Actors!.FirstOrDefault(x => x.UUID == after);
         }
+
         var results = Context.Actors!
             .AsNoTracking()
             .OrderBy(x => x.Id)
