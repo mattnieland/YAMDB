@@ -41,13 +41,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}      
         
-    - name: 'Build and push image'
+    - name: 'Login to Azure Container Registry'
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: |
-        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }}        
         
+    - name: Build Docker Image
+      run: |
+        docker build -f YAMDB.Api/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }} --target base .
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }}
