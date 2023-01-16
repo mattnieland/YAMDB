@@ -14,16 +14,26 @@ public class SecretProviders
 {
     private static readonly string baseUrl = "https://api.doppler.com/v3";
     private static readonly string project = "yamdb";
-
-    private static string config =
-        Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "dev" : "prod";
-
+    private static readonly string config;
     private static readonly RestClient client = new(baseUrl);
 
     static SecretProviders()
     {
         // We seed the initial provider token from the dotnet secret manager
-        var builder = new ConfigurationBuilder().AddUserSecrets<SecretProviders>();
+        // Allows for separate secrets if running local
+        // We can set up other trace constants
+        // and more specific control
+        config = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "dev" : "prod";
+        var appSettingsConfig = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+            ? "Debug"
+            : "Release";
+#if DEBUG
+        config = "local";
+#endif
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", true, true)
+            .AddJsonFile($"appsettings.{appSettingsConfig}.json", true, true)
+            .AddUserSecrets<SecretProviders>();
         Configuration = builder.Build();
     }
 
@@ -40,16 +50,15 @@ public class SecretProviders
             return;
         }
 
-        // Allows for separate secrets if running local
-        // We can set up other trace constants
-        // and more specific control
-#if DEBUG
-        config = "local";
-#endif
         var endpoint =
             $"configs/config/secrets/download?project={project}&config={config}&format=json&include_dynamic_secrets=true&dynamic_secrets_ttl_sec=1800";
         var request = new RestRequest(endpoint);
         var token = Configuration!["DOPPLER_TOKEN"];
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new Exception("Doppler token not found");
+        }
+
         request.AddHeader("Accept", "application/json");
         request.AddHeader("Authorization", $"Basic {token}");
         var response = client.Execute(request);
