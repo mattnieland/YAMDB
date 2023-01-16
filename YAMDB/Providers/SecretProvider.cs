@@ -23,7 +23,8 @@ public class SecretProviders
         var builder = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", true, true)
             .AddJsonFile($"appsettings.{config}.json", true, true)
-            .AddUserSecrets<SecretProviders>();
+            .AddUserSecrets<SecretProviders>()
+            .AddEnvironmentVariables();
         Configuration = builder.Build();
     }
 
