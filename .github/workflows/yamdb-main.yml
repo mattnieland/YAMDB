@@ -5,9 +5,12 @@ on:
     branches:
     - main
 env:
+  SENTRY_ORG: mattnieland
+  SENTRY_PROJECT: yamdb
+  SENTRY_ENVIRONMENT: Prod
   TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
   CORE_PROJECT_PATH: YAMDB
-  CONFIGURATION: Release
+  CONFIGURATION: Prod
   DOTNET_CORE_VERSION: 6.0.x  
     
 jobs:
@@ -16,8 +19,26 @@ jobs:
     runs-on: ubuntu-latest    
         
     steps:            
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |            
+        echo "::set-output name=sha::${GITHUB_SHA}"
+        
     - name: Checkout            
       uses: actions/checkout@v3
+
+    - name: Create Sentry release
+      uses: getsentry/action-release@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: ${{ env.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
+      with:
+        environment: ${{ env.SENTRY_ENVIRONMENT }}
+        version: ${{ steps.vars.outputs.sha }}
+        ignore_empty: true
+        ignore_missing: true
       
     - name: Setup dotnet ${{ env.dotnet-version }}
       uses: actions/setup-dotnet@v3

@@ -4,20 +4,42 @@ on:
   push:
     branches:
     - dev
-env:
+env:  
+  SENTRY_ORG: mattnieland
+  SENTRY_PROJECT: yamdb
+  SENTRY_ENVIRONMENT: Dev
   TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
   CORE_PROJECT_PATH: YAMDB
-  CONFIGURATION: Release
+  CONFIGURATION: Dev
   DOTNET_CORE_VERSION: 6.0.x  
+  IMAGE_NAME: yamdb-dev
     
 jobs:
   build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest    
         
-    steps:            
+    steps: 
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |            
+        echo "::set-output name=sha::${GITHUB_SHA}"
+        
     - name: Checkout            
       uses: actions/checkout@v3
+
+    - name: Create Sentry release
+      uses: getsentry/action-release@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: ${{ env.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
+      with:
+        environment: ${{ env.SENTRY_ENVIRONMENT }}
+        version: ${{ steps.vars.outputs.sha }}
+        ignore_empty: true
+        ignore_missing: true
       
     - name: Setup dotnet ${{ env.dotnet-version }}
       uses: actions/setup-dotnet@v3
@@ -50,5 +72,18 @@ jobs:
         
     - name: Build Docker Image
       run: |
-        docker build -f YAMDB.Api/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }} --target base .
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/yamdb-dev:${{ github.sha }}
+        docker build -f YAMDB.Api/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest  -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }} --target base .
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+    - name: 'Deploy to Azure Container Instances'
+      uses: 'azure/aci-deploy@v1'
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest        
+        registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        registry-username: ${{ secrets.REGISTRY_USERNAME }}
+        registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        name: ${{ env.IMAGE_NAME }}
+        location: 'northcentralus'
+        environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}

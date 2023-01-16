@@ -6,6 +6,7 @@ namespace YAMDB.Contexts;
 
 public class YAMDBContext : DbContext
 {
+    private readonly string config = SecretProviders.GetConfig();
     public virtual DbSet<Movies>? Movies { get; set; }
     public virtual DbSet<Actors>? Actors { get; set; }
     public virtual DbSet<ActorsInMovies>? ActorsInMovies { get; set; }
@@ -24,7 +25,7 @@ public class YAMDBContext : DbContext
             Title = tm.Title,
             Description = tm.Overview,
             ImageUrl = tm.PosterPath,
-            TheMovieDbId = tm.Id,
+            TheMovieDbId = tm.Id!.Value,
             ReleaseDate = tm.ReleaseDate != null ? DateTime.Parse(tm.ReleaseDate) : null,
             Genres = string.Join(", ", tm.GenreIds.Select(g => genres.ContainsKey(g) ? genres[g] : null).ToList())
         }).ToList();
@@ -44,7 +45,7 @@ public class YAMDBContext : DbContext
         var actorIndex = 1;
         foreach (var movie in topMovies)
         {
-            var movieCast = tmdbProvider.GetMovieCast(movie.Id).Result;
+            var movieCast = tmdbProvider.GetMovieCast(movie.Id!.Value).Result;
             movieCast.RemoveAll(ma => seedActors.Select(sa => sa.TheMovieDbId).Contains(ma.Id));
 
             foreach (var castMember in movieCast)
@@ -81,23 +82,20 @@ public class YAMDBContext : DbContext
     protected override void OnConfiguring
         (DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseInMemoryDatabase("YAMDB");
+        if (config == "local")
+        {
+            optionsBuilder.UseInMemoryDatabase("YAMDB");
+        }
+        else
+        {
+            var connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            if (string.IsNullOrEmpty(connString))
+            {
+                throw new Exception("Database connection string is not set");
+            }
 
-        // Uncomment to support switching to in memory on dev
-        // and SQL Server on production
-        //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-        //{
-        //    optionsBuilder.UseInMemoryDatabase("YAMDB");
-        //}
-        //else
-        //{
-        //    var connString = Environment.GetEnvironmentVariable("YAMDB_CONNECTION_STRING");
-        //    if (string.IsNullOrEmpty(connString))
-        //    {
-        //        throw new Exception("Database connection string is not set");
-        //    }
-        //    optionsBuilder.UseSqlServer(connString);
-        //}
+            optionsBuilder.UseSqlServer(connString);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -139,15 +137,14 @@ public class YAMDBContext : DbContext
             ;
 
         #region Seed the development database
-
-//#if DEBUG
-        var seedData = GetSeedData();
-        modelBuilder.Entity<Movies>().HasData(seedData.Movies);
-        modelBuilder.Entity<MovieRatings>().HasData(seedData.Ratings);
-        modelBuilder.Entity<Actors>().HasData(seedData.Actors);
-        modelBuilder.Entity<ActorsInMovies>().HasData(seedData.ActorsInMovies);
-//#endif
-
+        if (config == "local")
+        {
+            var seedData = GetSeedData();
+            modelBuilder.Entity<Movies>().HasData(seedData.Movies);
+            modelBuilder.Entity<MovieRatings>().HasData(seedData.Ratings);
+            modelBuilder.Entity<Actors>().HasData(seedData.Actors);
+            modelBuilder.Entity<ActorsInMovies>().HasData(seedData.ActorsInMovies);
+        }
         #endregion
     }
 }

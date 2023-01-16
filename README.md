@@ -109,7 +109,7 @@ its data from TheMovieDb.  You can enable/disable any of the "extras" like Doppl
 read on.
 
 ### Prerequisites
-You need the following pre-requisites to run thi project:
+You need the following pre-requisites to run this project:
 * A TheMovieDb API key (refer to this documentation: https://developers.themoviedb.org/3/getting-started/introduction)
 * A Doppler account with a project (use local/dev/prod config environments)
 * An Auth0 account (create an API & the write:movies & write:actors scopes using this guide: https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/interactive)

@@ -10,7 +10,7 @@ public class TopMovie
 
     [JsonPropertyName("genre_ids")] public List<int> GenreIds { get; set; } = new();
 
-    [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("id")] public int? Id { get; set; }
 
     [JsonPropertyName("original_language")]
     public string? OriginalLanguage { get; set; }
@@ -38,7 +38,7 @@ public class TopRatedMoviesResponse
 {
     [JsonPropertyName("page")] public int Page { get; set; }
 
-    [JsonPropertyName("results")] public List<TopMovie> Results { get; set; } = new();
+    [JsonPropertyName("results")] public List<TopMovie>? Results { get; set; } = new();
 
     [JsonPropertyName("total_pages")] public int TotalPages { get; set; }
 

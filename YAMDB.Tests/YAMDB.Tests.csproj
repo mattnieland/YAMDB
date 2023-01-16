@@ -6,14 +6,20 @@
 		<Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
+
+		<Configurations>Local;Dev;Prod</Configurations>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<NoWarn>1701;1702;MSB3277</NoWarn>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|AnyCPU'">
+	  <NoWarn>1701;1702;MSB3277</NoWarn>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<NoWarn>1701;1702;MSB3277</NoWarn>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Local|AnyCPU'">
+	  <NoWarn>1701;1702;MSB3277</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Prod|AnyCPU'">
+	  <NoWarn>1701;1702;MSB3277</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -38,9 +44,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="appsettings.Debug.json">
-			<IsTransformFile>true</IsTransformFile>
-			<DependentUpon>appsettings.json</DependentUpon>
+		<None Update="appsettings.Dev.json">
+		  <IsTransformFile>true</IsTransformFile>
+		  <DependentUpon>appsettings.json</DependentUpon>
 		</None>
 		<None Update="appsettings.json">
 			<TransformOnBuild>true</TransformOnBuild>
@@ -48,9 +54,13 @@
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
-		<None Update="appsettings.Release.json">
-			<IsTransformFile>true</IsTransformFile>
-			<DependentUpon>appsettings.json</DependentUpon>
+		<None Update="appsettings.Local.json">
+		  <IsTransformFile>true</IsTransformFile>
+		  <DependentUpon>appsettings.json</DependentUpon>
+		</None>
+		<None Update="appsettings.Prod.json">
+		  <IsTransformFile>true</IsTransformFile>
+		  <DependentUpon>appsettings.json</DependentUpon>
 		</None>
 	</ItemGroup>
 

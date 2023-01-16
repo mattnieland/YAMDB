@@ -19,20 +19,10 @@ public class SecretProviders
 
     static SecretProviders()
     {
-        // We seed the initial provider token from the dotnet secret manager
-        // Allows for separate secrets if running local
-        // We can set up other trace constants
-        // and more specific control
-        config = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "dev" : "prod";
-        var appSettingsConfig = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
-            ? "Debug"
-            : "Release";
-#if DEBUG
-        config = "local";
-#endif
+        config = GetConfig();
         var builder = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", true, true)
-            .AddJsonFile($"appsettings.{appSettingsConfig}.json", true, true)
+            .AddJsonFile($"appsettings.{config}.json", true, true)
             .AddUserSecrets<SecretProviders>();
         Configuration = builder.Build();
     }
@@ -42,6 +32,17 @@ public class SecretProviders
                                         Environment.GetEnvironmentVariable("DOPPLER_ENVIRONMENT") != null;
 
     private static IConfiguration? Configuration { get; set; }
+
+    public static string GetConfig()
+    {
+#if LOCAL
+        return "local";
+#elif DEV
+        return "dev";
+#elif PROD
+        return "prod";
+#endif
+    }
 
     public static void LoadSecrets()
     {

@@ -109,7 +109,7 @@ public class TMDBProvider
             }
 
             var result = JsonSerializer.Deserialize<TopRatedMoviesResponse>(response.Content);
-            if (result == null)
+            if (result?.Results == null)
             {
                 return movies;
             }
@@ -120,7 +120,7 @@ public class TMDBProvider
 
             if (page == null)
             {
-                Parallel.For(2, 11, pg =>
+                Parallel.For(2, 50, pg =>
                 {
                     endpoint =
                         $"{baseUrl}/movie/top_rated?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US&page={pg}";
@@ -132,11 +132,12 @@ public class TMDBProvider
                     }
 
                     result = JsonSerializer.Deserialize<TopRatedMoviesResponse>(response.Content);
-                    if (result == null)
+                    if (result?.Results == null)
                     {
                         return;
                     }
 
+                    result.Results.RemoveAll(m => m.Id == null);
                     movies.AddRange(result.Results);
                 });
             }
