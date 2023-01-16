@@ -148,11 +148,16 @@ public class ActorsControllerTests
     {
         try
         {
+            var actors = _context.Actors!.AsNoTracking().ToList();
+            Assert.IsNotNull(actors);
+            Assert.IsTrue(actors.Any());
+            var highestMovieDbId = actors.Max(a => a.TheMovieDbId);
+
             var actor = new Actors
             {
                 Name = "Test Actor",
                 UUID = Guid.NewGuid(),
-                TheMovieDbId = -1
+                TheMovieDbId = highestMovieDbId + 1
             };
 
             // create dummy actor

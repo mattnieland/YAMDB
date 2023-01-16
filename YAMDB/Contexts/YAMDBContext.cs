@@ -137,6 +137,7 @@ public class YAMDBContext : DbContext
             ;
 
         #region Seed the development database
+
         if (config == "local")
         {
             var seedData = GetSeedData();
@@ -145,6 +146,7 @@ public class YAMDBContext : DbContext
             modelBuilder.Entity<Actors>().HasData(seedData.Actors);
             modelBuilder.Entity<ActorsInMovies>().HasData(seedData.ActorsInMovies);
         }
+
         #endregion
     }
 }
