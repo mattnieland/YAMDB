@@ -2,20 +2,22 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
+<!-- [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
+-->
+[![yamdb-dev](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml)
+[![yamdb-main](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-main.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-main.yml)
+
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/mattnieland/YAMDB">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="120" height="120">
   </a>
 
   <h3 align="center">YAMDB (Yet Another Movie Db)</h3>
@@ -63,7 +65,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+* /swagger
+![Product Name Screen Shot][product-screenshot]
+
+* /graphql
+![Product Name Screen Shot2][product-screenshot2]
 
 I created this project for a coding assessment for a job.  I looped
 so many concepts into this project that I decided to make it
@@ -88,7 +94,7 @@ This API was built with the following tools:
 * [![HotChocolate][HotChocolate]][HotChocolate-url]
 * [![NuGet][NuGet]][NuGet-url]
 * [![ReSharper][ReSharper]][ReSharper-url]
-
+* [![Canva][Canva]][Canva-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -195,6 +201,7 @@ Project Link: [https://github.com/mattnieland/YAMDB](https://github.com/mattniel
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/mattnieland
 [product-screenshot]: images/screenshot.png
+[product-screenshot2]: images/screenshot2.png
 [.NET]: https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=.net
 [.NET-url]: https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0
 [EFCORE]: https://img.shields.io/badge/Entity%20Framework-512BD4?style=for-the-badge
@@ -217,3 +224,5 @@ Project Link: [https://github.com/mattnieland/YAMDB](https://github.com/mattniel
 [NuGet-url]: https://www.nuget.org
 [ReSharper]: https://img.shields.io/badge/ReSharper-000000?style=for-the-badge&logo=ReSharper
 [ReSharper-url]: https://www.jetbrains.com/resharper
+[Canva]: https://img.shields.io/badge/Canva-000000?style=for-the-badge&logo=Canva
+[Canva-url]: https://www.canva.com
