@@ -51,6 +51,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#authentication">Authentication</a></li>
       </ul>
     </li>    
     <li><a href="#contributing">Contributing</a></li>
@@ -111,7 +112,7 @@ read on.
 You need the following pre-requisites to run thi project:
 * A TheMovieDb API key (refer to this documentation: https://developers.themoviedb.org/3/getting-started/introduction)
 * A Doppler account with a project (use local/dev/prod config environments)
-* An Auth0 account (create an API using this guide: https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/interactive)
+* An Auth0 account (create an API & the write:movies & write:actors scopes using this guide: https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/interactive)
 * A Sentry account (use this guide to get a DSN https://docs.sentry.io/platforms/dotnet/guides/aspnetcore)
 * Logging is provided by Serilog and dumps to Azure Table Storage (If you'd like a different sink, refer to this list: https://github.com/serilog/serilog/wiki/Provided-Sinks)
 
@@ -139,6 +140,9 @@ That's it!  You're ready to compile and run via Visual Studio or VS Code.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Authentication
+Authentication is done via Auth0.  Create/Update/Delete endpoints require write:movies & write:actors scopes
+to work.  To get a Bearer token, use this guide (https://auth0.com/docs/secure/tokens/access-tokens/get-access-tokens)
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -202,6 +206,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [linkedin-url]: https://www.linkedin.com/in/mattnieland
 [product-screenshot]: images/screenshot.png
 [product-screenshot2]: images/screenshot2.png
+[token]: images/token.png
 [.NET]: https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=.net
 [.NET-url]: https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0
 [EFCORE]: https://img.shields.io/badge/Entity%20Framework-512BD4?style=for-the-badge
