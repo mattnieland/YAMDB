@@ -81,11 +81,11 @@ jobs:
       uses: 'azure/aci-deploy@v1'
       with:
         resource-group: ${{ secrets.RESOURCE_GROUP }}
-        dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+        dns-name-label: ${{ env.IMAGE_NAME }}
         image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest        
         registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         registry-username: ${{ secrets.REGISTRY_USERNAME }}
         registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         name: ${{ env.IMAGE_NAME }}
         location: 'northcentralus'
-        environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
+        secure-environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
