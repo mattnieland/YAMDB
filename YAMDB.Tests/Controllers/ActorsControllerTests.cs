@@ -23,7 +23,7 @@ public class ActorsControllerTests
 
         Mock<ActorsRepository> mockRepo = new(_context);
         Mock<ILogger<ActorsController>> mockLogger = new();
-        
+
         _controller = new ActorsController(mockRepo.Object, mockLogger.Object);
     }
 

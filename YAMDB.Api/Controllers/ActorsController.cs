@@ -67,31 +67,6 @@ public class ActorsController : ControllerBase
     }
 
     /// <summary>
-    ///     Retrieve all actors
-    /// </summary>
-    /// <returns>A list of actors</returns>
-    [HttpGet]
-    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
-    [SwaggerResponse(StatusCodes.Status200OK, "List of actors", typeof(IEnumerable<Actors>))]
-    [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
-    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
-    public IActionResult List([FromQuery] int? page = 1, [FromQuery] int? size = 50)
-    {
-        try
-        {
-            var actors = _actorsRepository.FindAll(page!.Value, size!.Value);
-            return new OkObjectResult(actors);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            throw;
-        }
-    }
-
-    /// <summary>
     ///     Get a specific actor
     /// </summary>
     /// <param name="uuid">The unique GUID for the actor</param>
@@ -138,6 +113,31 @@ public class ActorsController : ControllerBase
         try
         {
             var actors = _actorsRepository.GetByMovieId(movieId);
+            return new OkObjectResult(actors);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieve all actors
+    /// </summary>
+    /// <returns>A list of actors</returns>
+    [HttpGet]
+    [LimitRequest(MaxRequests = 2, TimeWindow = 5)]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of actors", typeof(IEnumerable<Actors>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status429TooManyRequests)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+    [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Service Unavailable")]
+    public IActionResult List([FromQuery] int? page = 1, [FromQuery] int? size = 50)
+    {
+        try
+        {
+            var actors = _actorsRepository.FindAll(page!.Value, size!.Value);
             return new OkObjectResult(actors);
         }
         catch (Exception ex)
