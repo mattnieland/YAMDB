@@ -170,8 +170,8 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Matt Nieland - https://www.linkedin.com/in/mattnieland - matt.nieland@gmail.com
-Project Link: [https://github.com/mattnieland/YAMDB](https://github.com/mattnieland/YAMDB)
+* Matt Nieland: matt.nieland@gmail.com
+* Project Link: [https://github.com/mattnieland/YAMDB](https://github.com/mattnieland/YAMDB)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
