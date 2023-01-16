@@ -149,7 +149,6 @@ public class MoviesControllerTests
         {
             var movie = new Movies
             {
-                Id = -1,
                 Title = "Test Movie",
                 UUID = Guid.NewGuid(),
                 TheMovieDbId = -1
@@ -165,7 +164,7 @@ public class MoviesControllerTests
             // validate that the movie was created
             var createdMovies = okResult.Value as Movies;
             Assert.IsNotNull(createdMovies);
-            Assert.IsTrue(createdMovies.Id == -1);
+            Assert.IsTrue(createdMovies.Title == "Test Movie");
         }
         catch (Exception ex)
         {

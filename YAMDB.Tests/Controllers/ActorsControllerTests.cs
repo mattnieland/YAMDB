@@ -148,7 +148,6 @@ public class ActorsControllerTests
         {
             var actor = new Actors
             {
-                Id = -1,
                 Name = "Test Actor",
                 UUID = Guid.NewGuid(),
                 TheMovieDbId = -1
@@ -164,7 +163,7 @@ public class ActorsControllerTests
             // validate that the actor was created
             var createdActor = okResult.Value as Actors;
             Assert.IsNotNull(createdActor);
-            Assert.IsTrue(createdActor.Id == -1);
+            Assert.IsTrue(createdActor.Name == "Test Actor");
         }
         catch (Exception ex)
         {
