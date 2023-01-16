@@ -43,17 +43,15 @@ builder.Services.AddScoped(typeof(IMoviesRepository), typeof(MoviesRepository));
 
 // Add Logging
 var loggingConnectionString = Environment.GetEnvironmentVariable("LOGGING_CONNECTION_STRING");
-if (string.IsNullOrEmpty(loggingConnectionString))
+if (!string.IsNullOrEmpty(loggingConnectionString))
 {
-    throw new Exception("Logging connection string is not set");
+    var logger = new LoggerConfiguration()
+        .WriteTo.AzureTableStorage(loggingConnectionString, storageTableName: "logs")
+        .CreateLogger();
+
+    builder.Logging.ClearProviders();
+    builder.Logging.AddSerilog(logger);
 }
-
-var logger = new LoggerConfiguration()
-    .WriteTo.AzureTableStorage(loggingConnectionString, storageTableName: "logs")
-    .CreateLogger();
-
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
 
 // Add Sentry
 var dsn = Environment.GetEnvironmentVariable("SENTRY_DSN");

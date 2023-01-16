@@ -3,7 +3,7 @@ name: yamdb-tests
 on:
   push:
     branches:
-    - main
+    - dev
 env:
   TEST_PROJECT_PATH: YAMDB.Tests/YAMDB.Tests.csproj
   CORE_PROJECT_PATH: YAMDB
@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-restore
 
     - name: Set Secret Token
-      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ secrets.DOPPLER_TOKEN }}" --project "${{ env.CORE_PROJECT_PATH }}"
+      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ secrets.DOPPLER_DEV_TOKEN }}" --project "${{ env.CORE_PROJECT_PATH }}"
       
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
