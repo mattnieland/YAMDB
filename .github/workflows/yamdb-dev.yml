@@ -1,4 +1,4 @@
-name: yamdb-tests
+name: yamdb-dev
 
 on:
   push:
