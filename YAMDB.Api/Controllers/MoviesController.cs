@@ -189,8 +189,8 @@ public class MoviesController : ControllerBase
     {
         try
         {
-            // check that it at least has an id
-            if (movie.Id == 0)
+            // check that it at least has an title
+            if (movie.Title == null)
             {
                 return BadRequest();
             }
@@ -237,8 +237,8 @@ public class MoviesController : ControllerBase
     {
         try
         {
-            // check that it at least has an id
-            if (movie.Id == 0)
+            // check that it at least has an title
+            if (movie.Title == null)
             {
                 return BadRequest();
             }

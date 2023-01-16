@@ -7,6 +7,7 @@ using YAMDB.Api.Controllers;
 using YAMDB.Api.Repositories;
 using YAMDB.Contexts;
 using YAMDB.Models;
+using YAMDB.Providers;
 
 namespace YAMDB.Tests.Controllers;
 
@@ -18,6 +19,7 @@ public class ActorsControllerTests
 
     public ActorsControllerTests()
     {
+        SecretProviders.LoadSecrets();
         _context = new YAMDBContext();
         _context.Database.EnsureCreated();
 
