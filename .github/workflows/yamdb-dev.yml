@@ -35,10 +35,10 @@ jobs:
       uses: getsentry/action-release@v1
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_ORG: $SENTRY_ORG
-        SENTRY_PROJECT: $env.SENTRY_PROJECT
+        SENTRY_ORG: ${{ env.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
       with:
-        environment: $SENTRY_ENVIRONMENT
+        environment: ${{ env.SENTRY_ENVIRONMENT }}
         version: ${{ steps.vars.outputs.sha }}
         ignore_empty: true
         ignore_missing: true
@@ -46,19 +46,19 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: $dotnet-version
+        dotnet-version: ${{ env.dotnet-version }}
         
     - name: Restore
       run: dotnet restore
       
     - name: Build & Publish
-      run: dotnet publish $API_PROJECT_PATH --configuration $CONFIGURATION --no-restore
+      run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration ${{ env.CONFIGURATION }} --no-restore
 
     - name: Set Secret Token
-      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ secrets.DOPPLER_DEV_TOKEN }}" --project "$CORE_PROJECT_PATH"
+      run: dotnet user-secrets set "DOPPLER_TOKEN" "${{ secrets.DOPPLER_DEV_TOKEN }}" --project "${{ env.CORE_PROJECT_PATH }}"
       
     - name: Test
-      run: dotnet test $TEST_PROJECT_PATH --no-restore --verbosity normal
+      run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
       
     #- name: Login via Azure CLI
     #  uses: azure/login@v1
@@ -74,7 +74,7 @@ jobs:
         
     #- name: Build & Push Docker Image
     #  run: |
-    #    docker build -f YAMDB.Api/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:latest  -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }} .
+    #    docker build -f YAMDB.Api/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest  -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
     #    docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
     #    docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
@@ -82,12 +82,12 @@ jobs:
     #  uses: 'azure/aci-deploy@v1'
     #  with:
     #    resource-group: ${{ secrets.RESOURCE_GROUP }}
-    #    dns-name-label: $IMAGE_NAME
-    #    image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:latest        
+    #    dns-name-label: ${{ env.IMAGE_NAME }}
+    #    image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest        
     #    registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
     #    registry-username: ${{ secrets.REGISTRY_USERNAME }}
     #    registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-    #    name: $IMAGE_NAME
+    #    name: ${{ env.IMAGE_NAME }}
     #    location: 'northcentralus'
     #    secure-environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
 
