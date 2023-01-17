@@ -92,7 +92,7 @@ jobs:
     #    secure-environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
     
     - name: Build and Push to GCP            
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v1
       with:
         service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         project_id: ${{ env.PROJECT_ID }}
