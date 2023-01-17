@@ -14,6 +14,7 @@ env:
   CONFIGURATION: Dev
   DOTNET_CORE_VERSION: 6.0.x  
   IMAGE_NAME: yamdb-dev
+  PROJECT_ID: yamdb-dev
     
 jobs:
   build-and-test:
@@ -59,12 +60,12 @@ jobs:
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --verbosity normal
       
-    - name: 'Login via Azure CLI'
+    - name: Login via Azure CLI
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}      
         
-    - name: 'Login to Azure Container Registry'
+    - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -77,15 +78,49 @@ jobs:
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
-    - name: Deploy to Azure Container Instances
-      uses: 'azure/aci-deploy@v1'
+    #- name: Deploy to Azure Container Instances
+    #  uses: 'azure/aci-deploy@v1'
+    #  with:
+    #    resource-group: ${{ secrets.RESOURCE_GROUP }}
+    #    dns-name-label: ${{ env.IMAGE_NAME }}
+    #    image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest        
+    #    registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+    #    registry-username: ${{ secrets.REGISTRY_USERNAME }}
+    #    registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+    #    name: ${{ env.IMAGE_NAME }}
+    #    location: 'northcentralus'
+    #    secure-environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
+    
+    - name: Build and Push to GCP            
+      uses: google-github-actions/setup-gcloud@master
       with:
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
-        dns-name-label: ${{ env.IMAGE_NAME }}
-        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest        
-        registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        name: ${{ env.IMAGE_NAME }}
-        location: 'northcentralus'
-        secure-environment-variables: DOPPLER_TOKEN=${{ secrets.DOPPLER_DEV_TOKEN }}
+        service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+        project_id: ${{ env.PROJECT_ID }}
+        export_default_credentials: true
+
+    - name: Build Docker Image
+      run: docker build -t $IMAGE_NAME:latest .
+
+    #- name: Automatic Tagging of Releases
+    #  id: increment-git-tag
+    #  run: |
+    #    bash ./scripts/git_update.sh -v major
+    
+    - name: Configure Docker Client
+      run: |-
+        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+        
+    - name: Push Docker Image to Container Registry (GCR)      
+      run: |-
+        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
+        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:${{ github.sha }}
+        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
+        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:${{ github.sha }}
+
+    #- name: Push Docker Image to Artifact Registry      
+    #  run: |-
+    #    docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+    #    docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:${{ github.sha }}
+    #    docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+    #    docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:${{ github.sha }}
