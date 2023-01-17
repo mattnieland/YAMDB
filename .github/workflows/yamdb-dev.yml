@@ -96,7 +96,7 @@ jobs:
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
     
-    - name: Build and Push to GCP            
+    - name: Setup Google Cloud
       uses: google-github-actions/setup-gcloud@v1
       with:        
         project_id: ${{ env.PROJECT_ID }}
@@ -111,14 +111,14 @@ jobs:
         gcloud auth configure-docker --quiet
         gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
         
-    - name: Push Docker Image to Container Registry (GCR)      
+    - name: Build & Push Image to Container Registry (GCR)      
       run: |-
-        docker build -f YAMDB.Api/Dockerfile -t ${{ env.IMAGE_NAME }}:latest -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+        docker build -f YAMDB.Api/Dockerfile -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
         docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
         docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-    #- name: Push Docker Image to Artifact Registry      
+    #- name: Build & Push Image to Artifact Registry      
     #  run: |-
-    #    docker build -f YAMDB.Api/Dockerfile -t ${{ env.IMAGE_NAME }}:latest -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .        
-    #    docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-    #    docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:${{ github.sha }}
+    #    docker build -f YAMDB.Api/Dockerfile -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .        
+    #    docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/images/${{ env.IMAGE_NAME }}:latest
+    #    docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/images/${{ env.IMAGE_NAME }}:${{ github.sha }}
