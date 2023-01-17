@@ -113,12 +113,16 @@ jobs:
         
     - name: Build & Push Image to Container Registry (GCR)      
       run: |-
-        docker build -f YAMDB.Api/Dockerfile -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+        docker build -f YAMDB.Api/Dockerfile .
+        docker tag gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+        docker tag gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
         docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
     #- name: Build & Push Image to Artifact Registry      
     #  run: |-
-    #    docker build -f YAMDB.Api/Dockerfile -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .        
+    #    docker build -f YAMDB.Api/Dockerfile .        
+    #    docker tag gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+    #    docker tag gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
     #    docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/images/${{ env.IMAGE_NAME }}:latest
     #    docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/images/${{ env.IMAGE_NAME }}:${{ github.sha }}
