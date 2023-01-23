@@ -7,7 +7,7 @@
 
 		<IsPackable>false</IsPackable>
 
-		<Configurations>Local;Dev;Prod</Configurations>
+		<Configurations>Local;Dev</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|AnyCPU'">
@@ -15,10 +15,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Local|AnyCPU'">
-		<NoWarn>1701;1702;MSB3277</NoWarn>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Prod|AnyCPU'">
 		<NoWarn>1701;1702;MSB3277</NoWarn>
 	</PropertyGroup>
 
@@ -55,10 +51,6 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
 		<None Update="appsettings.Local.json">
-			<IsTransformFile>true</IsTransformFile>
-			<DependentUpon>appsettings.json</DependentUpon>
-		</None>
-		<None Update="appsettings.Prod.json">
 			<IsTransformFile>true</IsTransformFile>
 			<DependentUpon>appsettings.json</DependentUpon>
 		</None>

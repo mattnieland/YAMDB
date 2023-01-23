@@ -5,7 +5,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<UserSecretsId>43d83252-302c-4942-9b0b-0c890dc0e840</UserSecretsId>
-		<Configurations>Local;Dev;Prod</Configurations>
+		<Configurations>Local;Dev</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|AnyCPU'">
+		<NoWarn>1701;1702;CA2254</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Local|AnyCPU'">
+		<NoWarn>1701;1702;CA2254</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

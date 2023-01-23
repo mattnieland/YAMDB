@@ -120,7 +120,7 @@ public class TMDBProvider
 
             if (page == null)
             {
-                Parallel.For(2, 50, pg =>
+                Parallel.For(2, 10, pg =>
                 {
                     endpoint =
                         $"{baseUrl}/movie/top_rated?api_key={Environment.GetEnvironmentVariable("THEMOVIEDB_API_KEY")}&language=en-US&page={pg}";

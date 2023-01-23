@@ -2,7 +2,6 @@
 
 namespace YAMDB.Models;
 
-[Index(nameof(CharacterName))]
 public class ActorsInMovies
 {
     public int ActorId { get; set; }

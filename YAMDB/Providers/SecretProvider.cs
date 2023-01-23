@@ -40,8 +40,6 @@ public class SecretProviders
         return "local";
 #elif DEV
         return "dev";
-#elif PROD
-        return "prod";
 #endif
     }
 

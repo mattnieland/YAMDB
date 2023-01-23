@@ -9,10 +9,10 @@ COPY ["YAMDB.Api/YAMDB.Api.csproj", "YAMDB.Api/"]
 RUN dotnet restore "YAMDB.Api/YAMDB.Api.csproj"
 COPY . .
 WORKDIR "/src/YAMDB.Api"
-RUN dotnet build "YAMDB.Api.csproj" -c Prod -o /app/build
+RUN dotnet build "YAMDB.Api.csproj" -c Dev -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "YAMDB.Api.csproj" -c Prod -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "YAMDB.Api.csproj" -c Dev -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
