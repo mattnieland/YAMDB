@@ -8,7 +8,6 @@
 [![Issues][issues-shield]][issues-url]
 -->
 [![yamdb-dev](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-dev.yml)
-[![yamdb-prod](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-prod.yml/badge.svg)](https://github.com/mattnieland/YAMDB/actions/workflows/yamdb-prod.yml)
 
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
