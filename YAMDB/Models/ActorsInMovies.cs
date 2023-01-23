@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace YAMDB.Models;
+﻿namespace YAMDB.Models;
 
 public class ActorsInMovies
 {
