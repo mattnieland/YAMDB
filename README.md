@@ -26,7 +26,7 @@
     <a href="https://github.com/mattnieland/YAMDB"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/mattnieland/YAMDB">View Demo</a>
+    <a href="https://yamdb-dev-xtt25aynea-uc.a.run.app/swagger/index.html">View Demo</a>
     ·
     <a href="https://github.com/mattnieland/YAMDB/issues">Report Bug</a>
     ·
