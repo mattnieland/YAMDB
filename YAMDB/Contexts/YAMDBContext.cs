@@ -100,8 +100,9 @@ public class YAMDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<MovieRatings>();
         modelBuilder.Entity<Movies>();
+        modelBuilder.Entity<MovieRatings>();
+        modelBuilder.Entity<Actors>();
         modelBuilder.Entity<ActorsInMovies>();
 
         // support many-to-many relationship between movies and actors
@@ -138,14 +139,14 @@ public class YAMDBContext : DbContext
 
         #region Seed the development database
 
-        //if (config == "local")
-        //{
+        if (config == "local")
+        {
             var seedData = GetSeedData();
             modelBuilder.Entity<Movies>().HasData(seedData.Movies);
             modelBuilder.Entity<MovieRatings>().HasData(seedData.Ratings);
             modelBuilder.Entity<Actors>().HasData(seedData.Actors);
             modelBuilder.Entity<ActorsInMovies>().HasData(seedData.ActorsInMovies);
-        //}
+        }
 
         #endregion
     }

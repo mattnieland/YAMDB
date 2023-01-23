@@ -187,7 +187,7 @@ if (db == null)
     throw new Exception("Could not get database context");
 }
 
-db.Database.EnsureDeleted();
+//db.Database.EnsureDeleted();
 db.Database.EnsureCreated();
 
 #endregion
