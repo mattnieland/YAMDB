@@ -42,7 +42,7 @@ public class RateLimitingMiddleware
         }
 
         var key = GenerateClientKey(context);
-        var _clientStatistics = GetClientStatisticsByKey(key).Result;
+        var _clientStatistics = await GetClientStatisticsByKey(key);
         // Check whether the request violates the rate limit policy
         if (_clientStatistics != null &&
             DateTime.Now < _clientStatistics.LastSuccessfulResponseTime.AddSeconds(rateLimitDecorator.TimeWindow) &&
@@ -78,7 +78,7 @@ public class RateLimitingMiddleware
 
     private async Task UpdateClientStatisticsAsync(string key, int maxRequests)
     {
-        var _clientStats = _cache.GetCachedValueAsync<ClientStatistics>(key).Result;
+        var _clientStats = await _cache.GetCachedValueAsync<ClientStatistics>(key);
         if (_clientStats is not null)
         {
             _clientStats.LastSuccessfulResponseTime = DateTime.UtcNow;
